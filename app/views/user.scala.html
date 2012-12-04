@@ -1,0 +1,82 @@
+@(user: User, symptoms: List[Symptom], events: List[Event], symptomForm: Form[Tuple2[String, String]], eventForm: Form[Tuple2[String, String]])
+
+@import helper._
+
+@main("User: {@user.id}") {
+
+<h1>User @user.id</h1>
+
+<table>
+    <tr style="border: black solid 1px;">
+        <td style="border: black solid 1px;">@user.username</td>
+        <td style="border: black solid 1px;">@user.password</td>
+        <td style="border: black solid 1px;">@user.email</td>
+        <td style="border: black solid 1px;">
+            @form(routes.Application.deleteUser(user.id)) {
+            <input type="submit" value="Delete">
+            }
+        </td>
+    </tr>
+</table>
+
+<p><a href="@routes.Application.users">Click to go back to 'all users'.</a></p>
+
+<h2>@symptoms.size symptom(s)</h2>
+<table>
+    @symptoms.map { symptom =>
+    <tr style="border: black solid 1px;">
+        <td style="border: black solid 1px;">@symptom.whichsymptom</td>
+        <td style="border: black solid 1px;">@symptom.whensymptom</td>
+        <td style="border: black solid 1px;">TODO: View</td>
+        <td style="border: black solid 1px;">
+            @form(routes.Application.deleteSymptom(user.id, symptom.id)) {
+            <input type="submit" value="Delete">
+            }
+        </td>
+    </tr>
+    }
+</table>
+
+<h2>Add a new symptom</h2>
+
+@form(routes.Application.newSymptom(user.id)) {
+
+@inputText(symptomForm("whichsymptom"))
+@inputText(symptomForm("whensymptom"))
+
+<input type="submit" value="Create">
+
+}
+
+<p><a href="@routes.Application.users">Click to go back to 'all users'.</a></p>
+
+<h2>@events.size event(s)</h2>
+<table>
+    @events.map { event =>
+    <tr style="border: black solid 1px;">
+        <td style="border: black solid 1px;">@event.eventname</td>
+        <td style="border: black solid 1px;">@event.eventtime</td>
+        <td style="border: black solid 1px;">TODO: View</td>
+        <td style="border: black solid 1px;">
+            @form(routes.Application.deleteEvent(user.id, event.id)) {
+            <input type="submit" value="Delete">
+            }
+        </td>
+    </tr>
+    }
+</table>
+
+<h2>Add a new event</h2>
+
+@form(routes.Application.newEvent(user.id)) {
+
+@inputText(eventForm("eventname"))
+@inputText(eventForm("eventtime"))
+
+<input type="submit" value="Create">
+
+}
+
+<p><a href="@routes.Application.users">Click to go back to 'all users'.</a></p>
+
+}

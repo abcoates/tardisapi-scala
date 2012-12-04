@@ -1,0 +1,23 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET     /                                       controllers.Application.index
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file                           controllers.Assets.at(path="/public", file)
+
+# Tardis API
+GET     /users                                  controllers.Application.users
+GET     /users/:id                              controllers.Application.selectUser(id: Long)
+POST    /users                                  controllers.Application.newUser
+POST    /users/:id/delete                       controllers.Application.deleteUser(id: Long)
+
+# GET     /users/:userid/symptoms/:id             controllers.Application.selectSymptom(userid: Long, id: Long)
+POST    /users/:userid/symptoms                 controllers.Application.newSymptom(userid: Long)
+POST    /users/:userid/symptoms/:id/delete      controllers.Application.deleteSymptom(userid: Long, id: Long)
+
+# GET     /users/:userid/events/:id             controllers.Application.selectEvent(userid: Long, id: Long)
+POST    /users/:userid/event                    controllers.Application.newEvent(userid: Long)
+POST    /users/:userid/events/:id/delete        controllers.Application.deleteEvent(userid: Long, id: Long)
