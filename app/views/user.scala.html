@@ -8,6 +8,12 @@
 
 <table>
     <tr style="border: black solid 1px;">
+        <th style="border: black solid 1px;">User name</th>
+        <th style="border: black solid 1px;">Password</th>
+        <th style="border: black solid 1px;">Email</th>
+        <th style="border: black solid 1px;">Delete</th>
+    </tr>
+    <tr style="border: black solid 1px;">
         <td style="border: black solid 1px;">@user.username</td>
         <td style="border: black solid 1px;">@user.password</td>
         <td style="border: black solid 1px;">@user.email</td>
@@ -23,11 +29,17 @@
 
 <h2>@symptoms.size symptom(s)</h2>
 <table>
+    <tr style="border: black solid 1px;">
+        <th style="border: black solid 1px;">Which symptom</th>
+        <th style="border: black solid 1px;">When symptom</th>
+        <th style="border: black solid 1px;">View</th>
+        <th style="border: black solid 1px;">Delete</th>
+    </tr>
     @symptoms.map { symptom =>
     <tr style="border: black solid 1px;">
         <td style="border: black solid 1px;">@symptom.whichsymptom</td>
         <td style="border: black solid 1px;">@symptom.whensymptom</td>
-        <td style="border: black solid 1px;">TODO: View</td>
+        <td style="border: black solid 1px;"><a href="@routes.Application.selectSymptom(user.id, symptom.id)">View</a></td>
         <td style="border: black solid 1px;">
             @form(routes.Application.deleteSymptom(user.id, symptom.id)) {
             <input type="submit" value="Delete">
@@ -52,11 +64,17 @@
 
 <h2>@events.size event(s)</h2>
 <table>
+    <tr style="border: black solid 1px;">
+        <th style="border: black solid 1px;">Event name</th>
+        <th style="border: black solid 1px;">Event time</th>
+        <th style="border: black solid 1px;">View</th>
+        <th style="border: black solid 1px;">Delete</th>
+    </tr>
     @events.map { event =>
     <tr style="border: black solid 1px;">
         <td style="border: black solid 1px;">@event.eventname</td>
         <td style="border: black solid 1px;">@event.eventtime</td>
-        <td style="border: black solid 1px;">TODO: View</td>
+        <td style="border: black solid 1px;"><a href="@routes.Application.selectEvent(user.id, event.id)">View</a></td>
         <td style="border: black solid 1px;">
             @form(routes.Application.deleteEvent(user.id, event.id)) {
             <input type="submit" value="Delete">

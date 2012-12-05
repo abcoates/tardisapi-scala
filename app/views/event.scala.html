@@ -1,0 +1,28 @@
+@(event: Event, eventForm: Form[Tuple2[String, String]])
+
+@import helper._
+
+@main("User: {@event.userid} - Event: {@event.id}") {
+
+<h1>User @event.userid - Event @event.id</h1>
+
+<table>
+    <tr style="border: black solid 1px;">
+        <th style="border: black solid 1px;">Event name</th>
+        <th style="border: black solid 1px;">Event time</th>
+        <th style="border: black solid 1px;">Delete</th>
+    </tr>
+    <tr style="border: black solid 1px;">
+        <td style="border: black solid 1px;">@event.eventname</td>
+        <td style="border: black solid 1px;">@event.eventtime</td>
+        <td style="border: black solid 1px;">
+            @form(routes.Application.deleteEvent(event.userid, event.id)) {
+                <input type="submit" value="Delete">
+            }
+        </td>
+    </tr>
+</table>
+
+<p><a href="@routes.Application.selectUser(event.userid)">Click to go back to user details.</a></p>
+
+}

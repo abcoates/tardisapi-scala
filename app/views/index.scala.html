@@ -7,11 +7,22 @@
 <h1>@users.size user(s)</h1>
 
 <table>
+    <tr style="border: black solid 1px;">
+        <th style="border: black solid 1px;">User name</th>
+        <th style="border: black solid 1px;">Password</th>
+        <th style="border: black solid 1px;">Email</th>
+        <th style="border: black solid 1px;"># symptoms</th>
+        <th style="border: black solid 1px;"># events</th>
+        <th style="border: black solid 1px;">View</th>
+        <th style="border: black solid 1px;">Delete</th>
+    </tr>
     @users.map { user =>
     <tr style="border: black solid 1px;">
         <td style="border: black solid 1px;">@user.username</td>
         <td style="border: black solid 1px;">@user.password</td>
         <td style="border: black solid 1px;">@user.email</td>
+        <td style="border: black solid 1px; text-align:right;">@Symptom.all(user.id).size</td>
+        <td style="border: black solid 1px; text-align:right;">@Event.all(user.id).size</td>
         <td style="border: black solid 1px;"><a href="@routes.Application.selectUser(user.id)">View</a></td>
         <td style="border: black solid 1px;">
             @form(routes.Application.deleteUser(user.id)) {

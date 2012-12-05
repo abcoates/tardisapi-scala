@@ -69,6 +69,15 @@ object Application extends Controller {
     )
   }
 
+  def selectSymptom(userid: Long, id: Long) = Action {
+    val symptom = Symptom.select(id)
+    if (symptom.userid == userid) {
+      Ok(views.html.symptom(symptom, symptomForm))
+    } else {
+      Ok(views.html.user(User.select(userid), Symptom.all(userid), Event.all(userid), symptomForm, eventForm))
+    }
+  }
+
   def deleteSymptom(userid: Long, id: Long) = Action {
     Symptom.delete(id)
     Redirect(routes.Application.selectUser(userid))
@@ -83,6 +92,15 @@ object Application extends Controller {
         Redirect(routes.Application.selectUser(userid))
       }
     )
+  }
+
+  def selectEvent(userid: Long, id: Long) = Action {
+    val event = Event.select(id)
+    if (event.userid == userid) {
+      Ok(views.html.event(event, eventForm))
+    } else {
+      Ok(views.html.user(User.select(userid), Symptom.all(userid), Event.all(userid), symptomForm, eventForm))
+    }
   }
 
   def deleteEvent(userid: Long, id: Long) = Action {

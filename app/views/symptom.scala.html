@@ -1,0 +1,28 @@
+@(symptom: Symptom, symptomForm: Form[Tuple2[String, String]])
+
+@import helper._
+
+@main("User: {@symptom.userid} - Symptom: {@symptom.id}") {
+
+<h1>User @symptom.userid - Symptom @symptom.id</h1>
+
+<table>
+    <tr style="border: black solid 1px;">
+        <th style="border: black solid 1px;">Which symptom</th>
+        <th style="border: black solid 1px;">When symptom</th>
+        <th style="border: black solid 1px;">Delete</th>
+    </tr>
+    <tr style="border: black solid 1px;">
+        <td style="border: black solid 1px;">@symptom.whichsymptom</td>
+        <td style="border: black solid 1px;">@symptom.whensymptom</td>
+        <td style="border: black solid 1px;">
+            @form(routes.Application.deleteSymptom(symptom.userid, symptom.id)) {
+                <input type="submit" value="Delete">
+            }
+        </td>
+    </tr>
+</table>
+
+<p><a href="@routes.Application.selectUser(symptom.userid)">Click to go back to user details.</a></p>
+
+}
