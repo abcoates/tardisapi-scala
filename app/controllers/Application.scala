@@ -35,7 +35,11 @@ object Application extends Controller {
   )
 
   def index = Action {
-    Redirect(routes.Application.users)
+    Redirect(routes.Application.login)
+  }
+
+  def login = Action {
+    Ok(views.html.login())
   }
 
   def users = Action { request =>
@@ -52,7 +56,7 @@ object Application extends Controller {
       }
       Ok(toJson(userDetails))
     } else {
-      Ok(views.html.index(User.all(), userForm))
+      Ok(views.html.users(User.all(), userForm))
     }
   }
 
