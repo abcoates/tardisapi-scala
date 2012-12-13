@@ -1,30 +1,30 @@
-# Users schema
+-- Patients schema
 
 # --- !Ups
 
-#CREATE SEQUENCE user_id_seq; # for in memory DB
-CREATE TABLE user (
-#    id integer NOT NULL DEFAULT nextval('user_id_seq'), # for in memory DB
-    id integer primary key auto_increment,
-    username varchar(255),
+CREATE SEQUENCE patient_id_seq; -- for in memory DB or Postgres
+CREATE TABLE patient ( -- NOTE: 'user' is not a suitable table name for Postgres
+    id integer NOT NULL DEFAULT nextval('patient_id_seq'), -- for in memory DB or Postgres
+--    id integer primary key auto_increment, -- for MySQL
+    patientname varchar(255),
     password varchar(255),
     email varchar(255)
 );
 
-#CREATE SEQUENCE symptom_id_seq; # for in memory DB
+CREATE SEQUENCE symptom_id_seq; -- for in memory DB or Postgres
 CREATE TABLE symptom (
-#    id integer NOT NULL DEFAULT nextval('symptom_id_seq'), # for in memory DB
-    id integer primary key auto_increment,
-    userid integer NOT NULL,
+    id integer NOT NULL DEFAULT nextval('symptom_id_seq'), -- for in memory DB or Postgres
+--    id integer primary key auto_increment, -- for MySQL
+    patientid integer NOT NULL,
     whichsymptom varchar(255),
     whensymptom varchar(255)
 );
 
-#CREATE SEQUENCE event_id_seq; # for in memory DB
+CREATE SEQUENCE event_id_seq; -- for in memory DB or Postgres
 CREATE TABLE event (
-#    id integer NOT NULL DEFAULT nextval('event_id_seq'), # for in memory DB
-    id integer primary key auto_increment,
-    userid integer NOT NULL,
+    id integer NOT NULL DEFAULT nextval('event_id_seq'), -- for in memory DB or Postgres
+--    id integer primary key auto_increment, -- for MySQL
+    patientid integer NOT NULL,
     eventname varchar(255),
     eventtime varchar(255)
 );
@@ -32,10 +32,10 @@ CREATE TABLE event (
 # --- !Downs
 
 DROP TABLE event;
-#DROP SEQUENCE event_id_seq; # for in memory DB
+DROP SEQUENCE event_id_seq; -- for in memory DB or Postgres
 
 DROP TABLE symptom;
-#DROP SEQUENCE symptom_id_seq; # for in memory DB
+DROP SEQUENCE symptom_id_seq; -- for in memory DB or Postgres
 
-DROP TABLE user;
-#DROP SEQUENCE user_id_seq; # for in memory DB
+DROP TABLE patient;
+DROP SEQUENCE patient_id_seq; -- for in memory DB or Postgres

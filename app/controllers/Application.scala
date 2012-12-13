@@ -6,13 +6,13 @@ import play.api.data._
 import play.api.data.Forms._
 import play.api.libs.json.Json._
 import play.api.libs.json.JsObject
-import models.{User, Symptom, Event}
+import models.{Patient, Symptom, Event}
 
 object Application extends Controller {
 
   val JsonMimeType = "application/json"
 
-  val userForm = Form(
+  val patientForm = Form(
     tuple(
       "username" -> nonEmptyText,
       "password" -> nonEmptyText,
@@ -42,75 +42,75 @@ object Application extends Controller {
     Ok(views.html.login())
   }
 
-  def users = Action { request =>
+  def patients = Action { request =>
     if (request.headers.get("accept").getOrElse("").equals(JsonMimeType)) {
-      val userDetails = User.all().map {
-        user => Map(
-          "id" -> toJson(user.id),
-          "username" -> toJson(user.username),
-          "password" -> toJson(user.password),
-          "email" -> toJson(user.email),
-          "symptoms" -> toJson(Symptom.all(user.id).map{symptom => symptom.id}),
-          "events" -> toJson(Event.all(user.id).map{event => event.id})
+      val patientDetails = Patient.all().map {
+        patient => Map(
+          "id" -> toJson(patient.id),
+          "username" -> toJson(patient.patientname),
+          "password" -> toJson(patient.password),
+          "email" -> toJson(patient.email),
+          "symptoms" -> toJson(Symptom.all(patient.id).map{symptom => symptom.id}),
+          "events" -> toJson(Event.all(patient.id).map{event => event.id})
         )
       }
-      Ok(toJson(userDetails))
+      Ok(toJson(patientDetails))
     } else {
-      Ok(views.html.users(User.all(), userForm))
+      Ok(views.html.patients(Patient.all(), patientForm))
     }
   }
 
-  def newUser = Action { implicit request =>
-    userForm.bindFromRequest.fold(
-      errors => BadRequest(views.html.index(User.all(), errors)),
+  def newPatient = Action { implicit request =>
+    patientForm.bindFromRequest.fold(
+      errors => BadRequest(views.html.patients(Patient.all(), errors)),
       _ => {
-        val (username, password, email) = userForm.bindFromRequest.get
-        User.create(username, password, email)
-        Redirect(routes.Application.users)
+        val (username, password, email) = patientForm.bindFromRequest.get
+        Patient.create(username, password, email)
+        Redirect(routes.Application.patients)
       }
     )
   }
 
-  def selectUser(id: Long) = Action { request =>
+  def selectPatient(id: Long) = Action { request =>
     if (request.headers.get("accept").getOrElse("").equals(JsonMimeType)) {
-      val user = User.select(id)
-      val userDetails = Map(
-        "id" -> toJson(user.id),
-        "username" -> toJson(user.username),
-        "password" -> toJson(user.password),
-        "email" -> toJson(user.email),
-        "symptoms" -> toJson(Symptom.all(user.id).map{symptom => symptom.id}),
-        "events" -> toJson(Event.all(user.id).map{event => event.id})
+      val patient = Patient.select(id)
+      val patientDetails = Map(
+        "id" -> toJson(patient.id),
+        "username" -> toJson(patient.patientname),
+        "password" -> toJson(patient.password),
+        "email" -> toJson(patient.email),
+        "symptoms" -> toJson(Symptom.all(patient.id).map{symptom => symptom.id}),
+        "events" -> toJson(Event.all(patient.id).map{event => event.id})
       )
-      Ok(toJson(userDetails))
+      Ok(toJson(patientDetails))
     } else {
-      Ok(views.html.user(User.select(id), Symptom.all(id), Event.all(id), symptomForm, eventForm))
+      Ok(views.html.patient(Patient.select(id), Symptom.all(id), Event.all(id), symptomForm, eventForm))
     }
   }
 
-  def deleteUser(id: Long) = Action {
-    User.delete(id)
-    Redirect(routes.Application.users)
+  def deletePatient(id: Long) = Action {
+    Patient.delete(id)
+    Redirect(routes.Application.patients)
   }
 
-  def newSymptom(userid: Long) = Action { implicit request =>
+  def newSymptom(patientid: Long) = Action { implicit request =>
     symptomForm.bindFromRequest.fold(
-      errors => BadRequest(views.html.user(User.select(userid), Symptom.all(userid), Event.all(userid), errors, eventForm)),
+      errors => BadRequest(views.html.patient(Patient.select(patientid), Symptom.all(patientid), Event.all(patientid), errors, eventForm)),
       _ => {
         val (whichsymptom, whensymptom) = symptomForm.bindFromRequest.get
-        Symptom.create(userid, whichsymptom, whensymptom)
-        Redirect(routes.Application.selectUser(userid))
+        Symptom.create(patientid, whichsymptom, whensymptom)
+        Redirect(routes.Application.selectPatient(patientid))
       }
     )
   }
 
-  def selectSymptom(userid: Long, id: Long) = Action { request =>
+  def selectSymptom(patientid: Long, id: Long) = Action { request =>
     val symptom = Symptom.select(id)
-    if (symptom.userid == userid) {
+    if (symptom.patientid == patientid) {
       if (request.headers.get("accept").getOrElse("").equals(JsonMimeType)) {
         val symptomDetails = Map(
           "id" -> toJson(symptom.id),
-          "userid" -> toJson(symptom.userid),
+          "patientid" -> toJson(symptom.patientid),
           "whichsymptom" -> toJson(symptom.whichsymptom),
           "whensymptom" -> toJson(symptom.whensymptom)
         )
@@ -122,34 +122,34 @@ object Application extends Controller {
       if (request.headers.get("accept").getOrElse("").equals(JsonMimeType)) {
         Ok(toJson(Map[String,JsObject]()))
       } else {
-        Ok(views.html.user(User.select(userid), Symptom.all(userid), Event.all(userid), symptomForm, eventForm))
+        Ok(views.html.patient(Patient.select(patientid), Symptom.all(patientid), Event.all(patientid), symptomForm, eventForm))
       }
     }
   }
 
-  def deleteSymptom(userid: Long, id: Long) = Action {
+  def deleteSymptom(patientid: Long, id: Long) = Action {
     Symptom.delete(id)
-    Redirect(routes.Application.selectUser(userid))
+    Redirect(routes.Application.selectPatient(patientid))
   }
 
-  def newEvent(userid: Long) = Action { implicit request =>
+  def newEvent(patientid: Long) = Action { implicit request =>
     eventForm.bindFromRequest.fold(
-      errors => BadRequest(views.html.user(User.select(userid), Symptom.all(userid), Event.all(userid), symptomForm, errors)),
+      errors => BadRequest(views.html.patient(Patient.select(patientid), Symptom.all(patientid), Event.all(patientid), symptomForm, errors)),
       _ => {
         val (eventname, eventtime) = eventForm.bindFromRequest.get
-        Event.create(userid, eventname, eventtime)
-        Redirect(routes.Application.selectUser(userid))
+        Event.create(patientid, eventname, eventtime)
+        Redirect(routes.Application.selectPatient(patientid))
       }
     )
   }
 
-  def selectEvent(userid: Long, id: Long) = Action { request =>
+  def selectEvent(patientid: Long, id: Long) = Action { request =>
     val event = Event.select(id)
-    if (event.userid == userid) {
+    if (event.patientid == patientid) {
       if (request.headers.get("accept").getOrElse("").equals(JsonMimeType)) {
         val eventDetails = Map(
           "id" -> toJson(event.id),
-          "userid" -> toJson(event.userid),
+          "userid" -> toJson(event.patientid),
           "eventname" -> toJson(event.eventname),
           "eventtime" -> toJson(event.eventtime)
         )
@@ -161,14 +161,14 @@ object Application extends Controller {
       if (request.headers.get("accept").getOrElse("").equals(JsonMimeType)) {
         Ok(toJson(Map[String,JsObject]()))
       } else {
-        Ok(views.html.user(User.select(userid), Symptom.all(userid), Event.all(userid), symptomForm, eventForm))
+        Ok(views.html.patient(Patient.select(patientid), Symptom.all(patientid), Event.all(patientid), symptomForm, eventForm))
       }
     }
   }
 
-  def deleteEvent(userid: Long, id: Long) = Action {
+  def deleteEvent(patientid: Long, id: Long) = Action {
     Event.delete(id)
-    Redirect(routes.Application.selectUser(userid))
+    Redirect(routes.Application.selectPatient(patientid))
   }
 
 }

@@ -5,28 +5,28 @@ import anorm.SqlParser._
 import play.api.db._
 import play.api.Play.current
 
-case class Symptom(id: Long, userid: Long, whichsymptom: String, whensymptom: String)
+case class Symptom(id: Long, patientid: Long, whichsymptom: String, whensymptom: String)
 
 object Symptom {
 
   val symptom = {
     get[Long]("id") ~
-      get[Long]("userid") ~
+      get[Long]("patientid") ~
         get[String]("whichsymptom") ~
           get[String]("whensymptom") map {
-            case id~userid~whichsymptom~whensymptom => Symptom(id, userid, whichsymptom, whensymptom)
+            case id~patientid~whichsymptom~whensymptom => Symptom(id, patientid, whichsymptom, whensymptom)
           }
   }
 
-  def all(userid: Long): List[Symptom] = DB.withConnection { implicit c =>
+  def all(patientid: Long): List[Symptom] = DB.withConnection { implicit c =>
     val allSymptoms = SQL("select * from symptom").as(symptom *)
-    allSymptoms.filter((s: Symptom) => s.userid.equals(userid))
+    allSymptoms.filter((s: Symptom) => s.patientid.equals(patientid))
   }
 
-  def create(userid: Long, whichsymptom: String, whensymptom: String) {
+  def create(patientid: Long, whichsymptom: String, whensymptom: String) {
     DB.withConnection { implicit c =>
-      SQL("insert into symptom (userid, whichsymptom, whensymptom) values ({userid}, {whichsymptom}, {whensymptom})").on(
-        'userid -> userid,
+      SQL("insert into symptom (patientid, whichsymptom, whensymptom) values ({patientid}, {whichsymptom}, {whensymptom})").on(
+        'patientid -> patientid,
         'whichsymptom -> whichsymptom,
         'whensymptom -> whensymptom
       ).executeUpdate()

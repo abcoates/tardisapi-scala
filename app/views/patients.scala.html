@@ -1,0 +1,48 @@
+@(patients: List[Patient], patientForm: Form[Tuple3[String, String, String]])
+
+@import helper._
+
+@main("TARDIS >> Users") {
+
+<h1>@patients.size user(s)</h1>
+
+<table>
+    <tr style="border: black solid 1px;">
+        <th style="border: black solid 1px;">User name</th>
+        <th style="border: black solid 1px;">Password</th>
+        <th style="border: black solid 1px;">Email</th>
+        <th style="border: black solid 1px;"># symptoms</th>
+        <th style="border: black solid 1px;"># events</th>
+        <th style="border: black solid 1px;">View</th>
+        <th style="border: black solid 1px;">Delete</th>
+    </tr>
+    @patients.map { patient =>
+    <tr style="border: black solid 1px;">
+        <td style="border: black solid 1px;">@patient.patientname</td>
+        <td style="border: black solid 1px;">@patient.password</td>
+        <td style="border: black solid 1px;">@patient.email</td>
+        <td style="border: black solid 1px; text-align:right;">@Symptom.all(patient.id).size</td>
+        <td style="border: black solid 1px; text-align:right;">@Event.all(patient.id).size</td>
+        <td style="border: black solid 1px;"><a href="@routes.Application.selectPatient(patient.id)">View</a></td>
+        <td style="border: black solid 1px;">
+            @form(routes.Application.deletePatient(patient.id)) {
+                <input type="submit" value="Delete">
+            }
+        </td>
+    </tr>
+    }
+</table>
+
+<h2>Add a new user</h2>
+
+@form(routes.Application.newPatient) {
+
+@inputText(patientForm("username"))
+@inputText(patientForm("password"))
+@inputText(patientForm("email"))
+
+<input type="submit" value="Create">
+
+}
+
+}

@@ -11,10 +11,10 @@ GET     /assets/*file                           controllers.Assets.at(path="/pub
 # Tardis API
 GET     /login                                  controllers.Application.login
 
-GET     /users                                  controllers.Application.users
-GET     /users/:id                              controllers.Application.selectUser(id: Long)
-POST    /users                                  controllers.Application.newUser
-POST    /users/:id/delete                       controllers.Application.deleteUser(id: Long)
+GET     /users                                  controllers.Application.patients
+GET     /users/:id                              controllers.Application.selectPatient(id: Long)
+POST    /users                                  controllers.Application.newPatient
+POST    /users/:id/delete                       controllers.Application.deletePatient(id: Long)
 
 GET     /users/:userid/symptoms/:id             controllers.Application.selectSymptom(userid: Long, id: Long)
 POST    /users/:userid/symptoms                 controllers.Application.newSymptom(userid: Long)

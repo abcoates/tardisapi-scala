@@ -1,10 +1,10 @@
-@(user: User, symptoms: List[Symptom], events: List[Event], symptomForm: Form[Tuple2[String, String]], eventForm: Form[Tuple2[String, String]])
+@(patient: Patient, symptoms: List[Symptom], events: List[Event], symptomForm: Form[Tuple2[String, String]], eventForm: Form[Tuple2[String, String]])
 
 @import helper._
 
-@main("User: {@user.id}") {
+@main("TARDIS >> User: #" + patient.id) {
 
-<h1>User @user.id</h1>
+<h1>User #@patient.id</h1>
 
 <table>
     <tr style="border: black solid 1px;">
@@ -14,18 +14,18 @@
         <th style="border: black solid 1px;">Delete</th>
     </tr>
     <tr style="border: black solid 1px;">
-        <td style="border: black solid 1px;">@user.username</td>
-        <td style="border: black solid 1px;">@user.password</td>
-        <td style="border: black solid 1px;">@user.email</td>
+        <td style="border: black solid 1px;">@patient.patientname</td>
+        <td style="border: black solid 1px;">@patient.password</td>
+        <td style="border: black solid 1px;">@patient.email</td>
         <td style="border: black solid 1px;">
-            @form(routes.Application.deleteUser(user.id)) {
+            @form(routes.Application.deletePatient(patient.id)) {
             <input type="submit" value="Delete">
             }
         </td>
     </tr>
 </table>
 
-<p><a href="@routes.Application.users">Click to go back to 'all users'.</a></p>
+<p><a href="@routes.Application.patients">Click to go back to 'all users'.</a></p>
 
 <h2>@symptoms.size symptom(s)</h2>
 <table>
@@ -39,9 +39,9 @@
     <tr style="border: black solid 1px;">
         <td style="border: black solid 1px;">@symptom.whichsymptom</td>
         <td style="border: black solid 1px;">@symptom.whensymptom</td>
-        <td style="border: black solid 1px;"><a href="@routes.Application.selectSymptom(user.id, symptom.id)">View</a></td>
+        <td style="border: black solid 1px;"><a href="@routes.Application.selectSymptom(patient.id, symptom.id)">View</a></td>
         <td style="border: black solid 1px;">
-            @form(routes.Application.deleteSymptom(user.id, symptom.id)) {
+            @form(routes.Application.deleteSymptom(patient.id, symptom.id)) {
             <input type="submit" value="Delete">
             }
         </td>
@@ -51,7 +51,7 @@
 
 <h2>Add a new symptom</h2>
 
-@form(routes.Application.newSymptom(user.id)) {
+@form(routes.Application.newSymptom(patient.id)) {
 
 @inputText(symptomForm("whichsymptom"))
 @inputText(symptomForm("whensymptom"))
@@ -60,7 +60,7 @@
 
 }
 
-<p><a href="@routes.Application.users">Click to go back to 'all users'.</a></p>
+<p><a href="@routes.Application.patients">Click to go back to 'all users'.</a></p>
 
 <h2>@events.size event(s)</h2>
 <table>
@@ -74,9 +74,9 @@
     <tr style="border: black solid 1px;">
         <td style="border: black solid 1px;">@event.eventname</td>
         <td style="border: black solid 1px;">@event.eventtime</td>
-        <td style="border: black solid 1px;"><a href="@routes.Application.selectEvent(user.id, event.id)">View</a></td>
+        <td style="border: black solid 1px;"><a href="@routes.Application.selectEvent(patient.id, event.id)">View</a></td>
         <td style="border: black solid 1px;">
-            @form(routes.Application.deleteEvent(user.id, event.id)) {
+            @form(routes.Application.deleteEvent(patient.id, event.id)) {
             <input type="submit" value="Delete">
             }
         </td>
@@ -86,7 +86,7 @@
 
 <h2>Add a new event</h2>
 
-@form(routes.Application.newEvent(user.id)) {
+@form(routes.Application.newEvent(patient.id)) {
 
 @inputText(eventForm("eventname"))
 @inputText(eventForm("eventtime"))
@@ -95,6 +95,6 @@
 
 }
 
-<p><a href="@routes.Application.users">Click to go back to 'all users'.</a></p>
+<p><a href="@routes.Application.patients">Click to go back to 'all users'.</a></p>
 
 }

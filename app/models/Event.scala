@@ -5,28 +5,28 @@ import anorm.SqlParser._
 import play.api.db._
 import play.api.Play.current
 
-case class Event(id: Long, userid: Long, eventname: String, eventtime: String)
+case class Event(id: Long, patientid: Long, eventname: String, eventtime: String)
 
 object Event {
 
   val event = {
     get[Long]("id") ~
-      get[Long]("userid") ~
+      get[Long]("patientid") ~
         get[String]("eventname") ~
           get[String]("eventtime") map {
-            case id~userid~eventname~eventtime => Event(id, userid, eventname, eventtime)
+            case id~patientid~eventname~eventtime => Event(id, patientid, eventname, eventtime)
           }
   }
 
-  def all(userid: Long): List[Event] = DB.withConnection { implicit c =>
+  def all(patientid: Long): List[Event] = DB.withConnection { implicit c =>
     val allEvents = SQL("select * from event").as(event *)
-    allEvents.filter((e: Event) => e.userid.equals(userid))
+    allEvents.filter((e: Event) => e.patientid.equals(patientid))
   }
 
-  def create(userid: Long, eventname: String, eventtime: String) {
+  def create(patientid: Long, eventname: String, eventtime: String) {
     DB.withConnection { implicit c =>
-      SQL("insert into event (userid, eventname, eventtime) values ({userid}, {eventname}, {eventtime})").on(
-        'userid -> userid,
+      SQL("insert into event (patientid, eventname, eventtime) values ({patientid}, {eventname}, {eventtime})").on(
+        'patientid -> patientid,
         'eventname -> eventname,
         'eventtime -> eventtime
       ).executeUpdate()
