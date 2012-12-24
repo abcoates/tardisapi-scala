@@ -11,6 +11,7 @@ GET     /assets/*file                           controllers.Assets.at(path="/pub
 # Tardis API
 GET     /login                                  controllers.Application.login
 
+# 'User' in the API corresponds to 'Patient' in the application/database.
 GET     /users                                  controllers.Application.patients
 GET     /users/:id                              controllers.Application.selectPatient(id: Long)
 POST    /users                                  controllers.Application.newPatient

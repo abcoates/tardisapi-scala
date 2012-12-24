@@ -6,13 +6,13 @@ import play.api.data._
 import play.api.data.Forms._
 import play.api.libs.json.Json._
 import play.api.libs.json.JsObject
-import models.{Patient, Symptom, Event}
+import models.{Person, Patient, Symptom, Event}
 
 object Application extends Controller {
 
   val JsonMimeType = "application/json"
 
-  val patientForm = Form(
+  val personForm = Form(
     tuple(
       "username" -> nonEmptyText,
       "password" -> nonEmptyText,
@@ -47,24 +47,24 @@ object Application extends Controller {
       val patientDetails = Patient.all().map {
         patient => Map(
           "id" -> toJson(patient.id),
-          "username" -> toJson(patient.patientname),
-          "password" -> toJson(patient.password),
-          "email" -> toJson(patient.email),
+          "username" -> toJson(patient.person.name),
+          "password" -> toJson(patient.person.password),
+          "email" -> toJson(patient.person.email),
           "symptoms" -> toJson(Symptom.all(patient.id).map{symptom => symptom.id}),
           "events" -> toJson(Event.all(patient.id).map{event => event.id})
         )
       }
       Ok(toJson(patientDetails))
     } else {
-      Ok(views.html.patients(Patient.all(), patientForm))
+      Ok(views.html.patients(Patient.all(), personForm))
     }
   }
 
   def newPatient = Action { implicit request =>
-    patientForm.bindFromRequest.fold(
+    personForm.bindFromRequest.fold(
       errors => BadRequest(views.html.patients(Patient.all(), errors)),
       _ => {
-        val (username, password, email) = patientForm.bindFromRequest.get
+        val (username, password, email) = personForm.bindFromRequest.get
         Patient.create(username, password, email)
         Redirect(routes.Application.patients)
       }
@@ -76,9 +76,9 @@ object Application extends Controller {
       val patient = Patient.select(id)
       val patientDetails = Map(
         "id" -> toJson(patient.id),
-        "username" -> toJson(patient.patientname),
-        "password" -> toJson(patient.password),
-        "email" -> toJson(patient.email),
+        "username" -> toJson(patient.person.name),
+        "password" -> toJson(patient.person.password),
+        "email" -> toJson(patient.person.email),
         "symptoms" -> toJson(Symptom.all(patient.id).map{symptom => symptom.id}),
         "events" -> toJson(Event.all(patient.id).map{event => event.id})
       )

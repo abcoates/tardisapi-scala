@@ -29,7 +29,7 @@ object Event {
         'patientid -> patientid,
         'eventname -> eventname,
         'eventtime -> eventtime
-      ).executeUpdate()
+      ).executeInsert()
     }
   }
 

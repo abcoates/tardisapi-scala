@@ -18,9 +18,9 @@
     </tr>
     @patients.map { patient =>
     <tr style="border: black solid 1px;">
-        <td style="border: black solid 1px;">@patient.patientname</td>
-        <td style="border: black solid 1px;">@patient.password</td>
-        <td style="border: black solid 1px;">@patient.email</td>
+        <td style="border: black solid 1px;">@patient.person.name</td>
+        <td style="border: black solid 1px;">@patient.person.password</td>
+        <td style="border: black solid 1px;">@patient.person.email</td>
         <td style="border: black solid 1px; text-align:right;">@Symptom.all(patient.id).size</td>
         <td style="border: black solid 1px; text-align:right;">@Event.all(patient.id).size</td>
         <td style="border: black solid 1px;"><a href="@routes.Application.selectPatient(patient.id)">View</a></td>

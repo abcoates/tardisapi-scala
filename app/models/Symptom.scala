@@ -29,7 +29,7 @@ object Symptom {
         'patientid -> patientid,
         'whichsymptom -> whichsymptom,
         'whensymptom -> whensymptom
-      ).executeUpdate()
+      ).executeInsert()
     }
   }
 
