@@ -56,7 +56,8 @@
 @inputText(symptomForm("whichsymptom"))
 @inputText(symptomForm("whensymptom"))
 
-<input type="submit" value="Create">
+<!-- TODO: [ABC] add some Javascript to clear value when user first types? -->
+<p><input type="submit" value="Enter Symptom" style="width:200px; height:40px; color:white; background:blue;"></p>
 
 }
 
@@ -84,16 +85,21 @@
     }
 </table>
 
-<h2>Add a new event</h2>
+<h2>Add a new Event</h2>
 
 @form(routes.Application.newEvent(patient.id)) {
 
 @inputText(eventForm("eventname"))
 @inputText(eventForm("eventtime"))
 
-<input type="submit" value="Create">
+<!-- TODO: [ABC] add some Javascript to clear value when user first types? -->
+<p><input type="submit" value="Enter Event" style="width:200px; height:40px; color:white; background:#32cd32;  "></p>
 
 }
+
+<!-- TODO: [ABC] work out what these reports should be like -->
+<h2>View your reports</h2>
+<p><input type="submit" value="View Reports" style="width:200px; height:40px; color:white; background:orange;  "></p>
 
 <p><a href="@routes.Application.patients">Click to go back to 'all users'.</a></p>
 
