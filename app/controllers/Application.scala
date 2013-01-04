@@ -12,6 +12,13 @@ object Application extends Controller {
 
   val JsonMimeType = "application/json"
 
+  val loginForm = Form(
+    tuple(
+      "email" -> text,
+      "password" -> text
+    )
+  )
+
   val personForm = Form(
     tuple(
       "username" -> nonEmptyText,
@@ -35,11 +42,31 @@ object Application extends Controller {
   )
 
   def index = Action {
-    Redirect(routes.Application.login)
+    Redirect(routes.Application.startHere)
+  }
+
+  def startHere = Action {
+    Ok(views.html.starthere())
+  }
+
+  def infoSheet = Action {
+    Ok(views.html.infosheet())
+  }
+
+  def consent = Action {
+    // TODO: [ABC] store consent information from form
+    // TODO: [ABC] go to registration form, not login form
+    // Ok(views.html.register())
+    Ok(views.html.login(loginForm))
   }
 
   def login = Action {
-    Ok(views.html.login())
+    Ok(views.html.login(loginForm))
+  }
+
+  def checkLogin = Action {
+    // TODO: [ABC] add some actual validate code here
+    Redirect(routes.Application.login)
   }
 
   def patients = Action { request =>

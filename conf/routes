@@ -9,7 +9,12 @@ GET     /                                       controllers.Application.index
 GET     /assets/*file                           controllers.Assets.at(path="/public", file)
 
 # Tardis API
+GET     /starthere                              controllers.Application.startHere
+GET     /infosheet                              controllers.Application.infoSheet
+POST    /consent                                controllers.Application.consent
+#GET     /register                               controllers.Application.register
 GET     /login                                  controllers.Application.login
+POST    /checklogin                             controllers.Application.checkLogin
 
 # 'User' in the API corresponds to 'Patient' in the application/database.
 GET     /users                                  controllers.Application.patients

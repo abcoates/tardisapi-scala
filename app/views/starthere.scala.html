@@ -1,0 +1,35 @@
+@import helper._
+
+@main("TARDIS >> Login and Registration") {
+        <h3>TARDIS for GOR tracks symptoms of<br/>gastro-oesophageal reflux in children.</h3>
+
+<table>
+    <colgroup>
+        <col span="1" style="background-color:#add8e6" width="50%">
+    </colgroup>
+    <tr>
+        <td><b>Existing Users     </b></td>
+        <td><a href="@routes.Application.login">Click to login</a></td>
+    </tr>
+    <tr>
+        <td><b>New users</b></td>
+        <td><a href="@routes.Application.infoSheet">Click to register</td>
+    </tr>
+</table>
+
+<h4 style="margin-top:2ex;">To register as a new user, here's what you need to do:</h4>
+<ol>
+<li>Review the <a href="@routes.Application.infoSheet">information for participants.</a></li>
+<li>Sign up on this website.</li>
+<li>Download the TARDIS for GOR app from the iPhone App store</li>
+</ol>
+
+<h4 style="margin-top:2ex;">Please note:</h4>
+<ul>
+<li>When you register, we will ask you for basic information about the person whose reflux you are tracking i.e. their date of birth and their gender.</li>
+<li>After you register, we will email you a unique study id which will help us recognise your data.</li>
+<li>After you download the TARDIS app from the iPhone App store, you will use this unique study id to activate your app. </li>
+<li>The reflux data that you enter into your phone will be sent back to us securely and anonymously. </li>
+</ul>
+
+}

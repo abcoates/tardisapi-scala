@@ -1,36 +1,27 @@
+@(loginForm: Form[Tuple2[String, String]])
+
 @import helper._
 
-@main("TARDIS >> Login and Registration") {
-        <h3>TARDIS for GOR tracks symptoms of gastro-oesophageal reflux in children.</h3>
+@main("TARDIS >> Login") {
 
+<h1>Please Login</h1>
 
-<table>
-    <colgroup>
-        <col span="1" style="background-color:#add8e6" width="50%">
-    </colgroup>
-    <tr>
-        <td><b>Existing Users     </b></td>
-        <td>Login </td>
-    </tr>
-    <tr>
-        <td><b>New users</b></td>
-        <!-- TODO: [ABC] proper link to info sheet in following 'td' -->
-        <td><a href="infosheet.html">Register</td>
-    </tr>
-</table>
+@form(routes.Application.checkLogin) {
 
-<p> To register as a new user, here's what you need to do:</p>
-<ol>
-<!-- TODO: [ABC] proper link to info sheet in following 'li' -->
-<li>Review the <a href="infosheet.html">information for participants.</a></li>
-<li>Sign up on this website.</li>
-<li>Download the TARDIS for GOR app from the App store</li>
-</ol>
-<p>When you register, we will ask you for basic information on the person you would like to track i.e. their date of birth and their gender.</p>
-<p>When you register, we will email you a unique study id which will help us recognise your data.</p>
-<p>After you download the TARDIS app from the app store, you will use this unique study id to activate your app. </p>
+@inputText(loginForm("email"), args = 'size -> 32, 'placeholder -> "type your email address")
+@inputPassword(loginForm("password"), args = 'size -> 32, 'placeholder -> "type your password")
+<dl>
+    <dt>
+        <input type="submit" value="Login">
+    </dt>
+    <dd>
+        <p/>
+    </dd>
+    <dt>
+        <p><a href="@routes.Application.index">Click here to cancel and go back to the main page.</a></p>
+    </dt>
+</dl>
 
-<p>The data from your phone will be sent back to us securely and anonymously. </p>
-
+}
 
 }
