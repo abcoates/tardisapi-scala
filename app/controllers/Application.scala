@@ -8,7 +8,17 @@ import play.api.libs.json.Json._
 import play.api.libs.json.JsObject
 import models.{Person, Patient, Symptom, Event}
 
-object Application extends Controller {
+trait SessionController extends Controller {
+
+  def redirectToLoginPage: Action[AnyContent];
+
+  def isLoggedIn: Boolean
+
+  def checkLoggedIn(action: Action[AnyContent]) = if (isLoggedIn) action else redirectToLoginPage
+
+}
+
+object Application extends SessionController {
 
   val JsonMimeType = "application/json"
 
@@ -41,7 +51,15 @@ object Application extends Controller {
     )
   )
 
+  override def isLoggedIn = false
+
   def index = Action {
+    Redirect(routes.Application.startHere)
+  }
+
+  def default(unknown: String) = index
+
+  override def redirectToLoginPage = Action {
     Redirect(routes.Application.startHere)
   }
 
@@ -69,7 +87,7 @@ object Application extends Controller {
     Redirect(routes.Application.login)
   }
 
-  def patients = Action { request =>
+  def patients = checkLoggedIn(Action { request =>
     if (request.headers.get("accept").getOrElse("").equals(JsonMimeType)) {
       val patientDetails = Patient.all().map {
         patient => Map(
@@ -85,9 +103,9 @@ object Application extends Controller {
     } else {
       Ok(views.html.patients(Patient.all(), personForm))
     }
-  }
+  })
 
-  def newPatient = Action { implicit request =>
+  def newPatient = checkLoggedIn(Action { implicit request =>
     personForm.bindFromRequest.fold(
       errors => BadRequest(views.html.patients(Patient.all(), errors)),
       _ => {
@@ -96,9 +114,9 @@ object Application extends Controller {
         Redirect(routes.Application.patients)
       }
     )
-  }
+  })
 
-  def selectPatient(id: Long) = Action { request =>
+  def selectPatient(id: Long) = checkLoggedIn(Action { request =>
     if (request.headers.get("accept").getOrElse("").equals(JsonMimeType)) {
       val patient = Patient.select(id)
       val patientDetails = Map(
@@ -113,14 +131,14 @@ object Application extends Controller {
     } else {
       Ok(views.html.patient(Patient.select(id), Symptom.all(id), Event.all(id), symptomForm, eventForm))
     }
-  }
+  })
 
-  def deletePatient(id: Long) = Action {
+  def deletePatient(id: Long) = checkLoggedIn(Action {
     Patient.delete(id)
     Redirect(routes.Application.patients)
-  }
+  })
 
-  def newSymptom(patientid: Long) = Action { implicit request =>
+  def newSymptom(patientid: Long) = checkLoggedIn(Action { implicit request =>
     symptomForm.bindFromRequest.fold(
       errors => BadRequest(views.html.patient(Patient.select(patientid), Symptom.all(patientid), Event.all(patientid), errors, eventForm)),
       _ => {
@@ -129,9 +147,9 @@ object Application extends Controller {
         Redirect(routes.Application.selectPatient(patientid))
       }
     )
-  }
+  })
 
-  def selectSymptom(patientid: Long, id: Long) = Action { request =>
+  def selectSymptom(patientid: Long, id: Long) = checkLoggedIn(Action { request =>
     val symptom = Symptom.select(id)
     if (symptom.patientid == patientid) {
       if (request.headers.get("accept").getOrElse("").equals(JsonMimeType)) {
@@ -152,14 +170,14 @@ object Application extends Controller {
         Ok(views.html.patient(Patient.select(patientid), Symptom.all(patientid), Event.all(patientid), symptomForm, eventForm))
       }
     }
-  }
+  })
 
-  def deleteSymptom(patientid: Long, id: Long) = Action {
+  def deleteSymptom(patientid: Long, id: Long) = checkLoggedIn(Action {
     Symptom.delete(id)
     Redirect(routes.Application.selectPatient(patientid))
-  }
+  })
 
-  def newEvent(patientid: Long) = Action { implicit request =>
+  def newEvent(patientid: Long) = checkLoggedIn(Action { implicit request =>
     eventForm.bindFromRequest.fold(
       errors => BadRequest(views.html.patient(Patient.select(patientid), Symptom.all(patientid), Event.all(patientid), symptomForm, errors)),
       _ => {
@@ -168,9 +186,9 @@ object Application extends Controller {
         Redirect(routes.Application.selectPatient(patientid))
       }
     )
-  }
+  })
 
-  def selectEvent(patientid: Long, id: Long) = Action { request =>
+  def selectEvent(patientid: Long, id: Long) = checkLoggedIn(Action { request =>
     val event = Event.select(id)
     if (event.patientid == patientid) {
       if (request.headers.get("accept").getOrElse("").equals(JsonMimeType)) {
@@ -191,11 +209,11 @@ object Application extends Controller {
         Ok(views.html.patient(Patient.select(patientid), Symptom.all(patientid), Event.all(patientid), symptomForm, eventForm))
       }
     }
-  }
+  })
 
-  def deleteEvent(patientid: Long, id: Long) = Action {
+  def deleteEvent(patientid: Long, id: Long) = checkLoggedIn(Action {
     Event.delete(id)
     Redirect(routes.Application.selectPatient(patientid))
-  }
+  })
 
 }
