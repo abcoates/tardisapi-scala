@@ -23,9 +23,9 @@
         <td style="border: black solid 1px;">@patient.person.email</td>
         <td style="border: black solid 1px; text-align:right;">@Symptom.all(patient.id).size</td>
         <td style="border: black solid 1px; text-align:right;">@Event.all(patient.id).size</td>
-        <td style="border: black solid 1px;"><a href="@routes.Application.selectPatient(patient.id)">View</a></td>
+        <td style="border: black solid 1px;"><a href="@routes.Application.selectPatient(patient.person.id)">View</a></td>
         <td style="border: black solid 1px;">
-            @form(routes.Application.deletePatient(patient.id)) {
+            @form(routes.Application.deletePatient(patient.person.id)) {
                 <input type="submit" value="Delete">
             }
         </td>

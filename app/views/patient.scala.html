@@ -2,9 +2,9 @@
 
 @import helper._
 
-@main("TARDIS >> User: #" + patient.id) {
+@main("TARDIS >> Patient: #" + patient.person.id) {
 
-<h1>User #@patient.id</h1>
+<h1>Patient #@patient.person.id</h1>
 
 <table>
     <tr style="border: black solid 1px;">
@@ -18,7 +18,7 @@
         <td style="border: black solid 1px;">@patient.person.password</td>
         <td style="border: black solid 1px;">@patient.person.email</td>
         <td style="border: black solid 1px;">
-            @form(routes.Application.deletePatient(patient.id)) {
+            @form(routes.Application.deletePatient(patient.person.id)) {
             <input type="submit" value="Delete">
             }
         </td>

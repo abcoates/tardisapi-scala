@@ -6,19 +6,19 @@ import play.api.db._
 import play.api.Play.current
 import play.api.Logger
 
-case class Patient(id: Long, person: Person)
+case class Administrator(id: Long, person: Person)
 
-object Patient {
+object Administrator {
 
-  val patient = {
+  val admin = {
     get[Long]("id") ~
       get[Long]("personid") map {
-        case id~personid => Patient(id, Person.select(personid))
-      }
+      case id~personid => Administrator(id, Person.select(personid))
+    }
   }
 
-  def all(): List[Patient] = DB.withConnection { implicit c =>
-    SQL("select * from patient").as(patient *)
+  def all(): List[Administrator] = DB.withConnection { implicit c =>
+    SQL("select * from admin").as(admin *)
   }
 
   def create(name: String, password: String, email: String): Option[Long] = {
@@ -26,7 +26,7 @@ object Patient {
     if (personid.isDefined) {
       var id: Option[Long] = None
       DB.withConnection { implicit c =>
-        id = SQL("insert into patient (personid) values ({personid})").on(
+        id = SQL("insert into admin (personid) values ({personid})").on(
           'personid -> personid.get
         ).executeInsert()
       }
@@ -36,17 +36,17 @@ object Patient {
     }
   }
 
-  def select(personid: Long): Option[Patient] = {
+  def select(personid: Long): Option[Administrator] = {
     DB.withConnection { implicit c =>
-      SQL("select * from patient where personid = {personid}").on(
+      SQL("select * from admin where personid = {personid}").on(
         'personid -> personid
-      ).as(patient *)
+      ).as(admin *)
     }.headOption
   }
 
   def delete(personid: Long) {
     DB.withConnection { implicit c =>
-      SQL("delete from patient where personid = {personid}").on(
+      SQL("delete from admin where personid = {personid}").on(
         'personid -> personid
       ).executeUpdate()
       Person.delete(personid)
