@@ -6,7 +6,7 @@ import play.api.data._
 import play.api.data.Forms._
 import play.api.libs.json.Json._
 import play.api.libs.json.JsObject
-import models.{Person, Patient, Symptom, Event}
+import models.{Person, Patient, Doctor, Administrator, Symptom, Event}
 
 trait SessionController extends Controller {
 
@@ -86,6 +86,54 @@ object Application extends SessionController {
     // TODO: [ABC] add some actual validate code here
     Redirect(routes.Application.login)
   }
+
+  def persons = checkLoggedIn(Action { request =>
+    if (request.headers.get("accept").getOrElse("").equals(JsonMimeType)) {
+      val personDetails = Person.all().map {
+        person => Map(
+          "id" -> toJson(person.id),
+          "username" -> toJson(person.name),
+          "email" -> toJson(person.email)
+        )
+      }
+      Ok(toJson(personDetails))
+    } else {
+      Ok(views.html.persons(Person.all(), personForm))
+    }
+  })
+
+  def newPerson = checkLoggedIn(Action { implicit request =>
+    personForm.bindFromRequest.fold(
+      errors => BadRequest(views.html.persons(Person.all(), errors)),
+      _ => {
+        val (username, email, password) = personForm.bindFromRequest.get
+        Person.create(username, email, password)
+        Redirect(routes.Application.persons)
+      }
+    )
+  })
+
+  def selectPerson(id: Long) = checkLoggedIn(Action { request =>
+    val person = Person.select(id)
+    if (request.headers.get("accept").getOrElse("").equals(JsonMimeType)) {
+      val personDetails = Map(
+        "id" -> toJson(person.id),
+        "username" -> toJson(person.name),
+        "email" -> toJson(person.email)
+      )
+      Ok(toJson(personDetails))
+    } else {
+      Ok(views.html.person(person))
+    }
+  })
+
+  def deletePerson(id: Long) = checkLoggedIn(Action {
+    Person.delete(id)
+    Patient.delete(id)
+    Doctor.delete(id)
+    Administrator.delete(id)
+    Redirect(routes.Application.persons)
+  })
 
   def patients = checkLoggedIn(Action { request =>
     if (request.headers.get("accept").getOrElse("").equals(JsonMimeType)) {

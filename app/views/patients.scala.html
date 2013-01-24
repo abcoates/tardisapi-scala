@@ -2,9 +2,9 @@
 
 @import helper._
 
-@main("TARDIS >> Users") {
+@main("TARDIS >> Patients") {
 
-<h1>@patients.size user(s)</h1>
+<h1>@patients.size patient(s)</h1>
 
 <table>
     <tr style="border: black solid 1px;">
@@ -33,7 +33,9 @@
     }
 </table>
 
-<h2>Add a new user</h2>
+<p style="margin-top:2ex;"><a href="@routes.Application.persons">Click to go back to 'all users'.</a></p>
+
+<h2>Add a new patient</h2>
 
 @form(routes.Application.newPatient) {
 
@@ -44,5 +46,7 @@
 <input type="submit" value="Create">
 
 }
+
+<p style="margin-top:2ex;"><a href="@routes.Application.persons">Click to go back to 'all users'.</a></p>
 
 }

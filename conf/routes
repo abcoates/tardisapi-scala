@@ -16,11 +16,16 @@ POST    /consent                                controllers.Application.consent
 GET     /login                                  controllers.Application.login
 POST    /checklogin                             controllers.Application.checkLogin
 
-# 'User' in the API corresponds to 'Patient' in the application/database.
-GET     /users                                  controllers.Application.patients
-GET     /users/:id                              controllers.Application.selectPatient(id: Long)
-POST    /users                                  controllers.Application.newPatient
-POST    /users/:id/delete                       controllers.Application.deletePatient(id: Long)
+# 'User' in the API corresponds to 'Person' in the application/database.
+GET     /users                                  controllers.Application.persons
+GET     /users/:id                              controllers.Application.selectPerson(id: Long)
+POST    /users                                  controllers.Application.newPerson
+POST    /users/:id/delete                       controllers.Application.deletePerson(id: Long)
+
+GET     /patients                               controllers.Application.patients
+GET     /patients/:id                           controllers.Application.selectPatient(id: Long)
+POST    /patients                               controllers.Application.newPatient
+POST    /patients/:id/delete                    controllers.Application.deletePatient(id: Long)
 
 GET     /users/:userid/symptoms/:id             controllers.Application.selectSymptom(userid: Long, id: Long)
 POST    /users/:userid/symptoms                 controllers.Application.newSymptom(userid: Long)
