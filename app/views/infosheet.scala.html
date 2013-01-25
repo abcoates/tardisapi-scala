@@ -9,27 +9,35 @@
 <h4 style="margin-top:2ex;">Please confirm that you are happy to participate:</h4>
 <div style="width: 500px; color: red">
 
-@form(routes.Application.consent) {
+<script language="javascript" type="text/javascript">
+    function checkConsent() {
+        var result = document.consentForm.consent1.checked && document.consentForm.consent2.checked && document.consentForm.consent3.checked && document.consentForm.consent4.checked && document.consentForm.consent5.checked
+        if (!result) alert("Before you can agree and submit, you must check all of the consent boxes.")
+        return result
+    }
+</script>
+
+@form(routes.Application.consent, 'name -> "consentForm", 'onsubmit -> "return checkConsent()") {
 <table border="0"cellpadding="15px">
     <tr>
-        <td>I confirm that I have read and understood the information sheet dated 27/11/2012 (Version 2) for the above study.  I have had the opportunity to consider the information, ask questions and have had these answered satisfactorily.</td>
-        <td><input type="checkbox" value="consent1"/></td>
+        <td>I confirm that I have read and understood the above information sheet dated 27/11/2012 (Version 2) for the above study.  I have had the opportunity to consider the information, ask questions and have had these answered satisfactorily.</td>
+        <td><input name="consent1" type="checkbox" value="consent1"/></td>
     </tr>
     <tr>
         <td>I understand that participation is voluntary and that I am free to withdraw at any time without giving any reason, without my medical care, or that of my child being affected.</td>
-        <td><input type="checkbox" value="consent2"/></td>
+        <td><input name="consent2" type="checkbox" value="consent2"/></td>
     </tr>
     <tr>
         <td>I understand that relevant sections of my child's medical notes and data collected during the study may be looked at by the research team, clinicians at Great Ormond Street Hospital and individuals authorized by the sponsor of the trial (University College London).  I give permission for these individuals to have access to my records.</td>
-        <td><input type="checkbox" value="consent3"/></td>
+        <td><input name="consent3" type="checkbox" value="consent3"/></td>
     </tr>
     <tr>
         <td>I have been informed that the confidentiality of the information I provide will be safeguarded in keeping with the sponsor's and NHS data protection guidelines.</td>
-        <td><input type="checkbox" value="consent4"/></td>
+        <td><input name="consent4" type="checkbox" value="consent4"/></td>
     </tr>
     <tr>
         <td>I agree to take part in the above study.</td>
-        <td><input type="checkbox" value="consent5"></td>
+        <td><input name="consent5" type="checkbox" value="consent5"></td>
     </tr>
 </table>
 <dl>
