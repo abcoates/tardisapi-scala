@@ -37,6 +37,20 @@ object Application extends SessionController {
     )
   )
 
+  val consentForm = Form(
+    tuple(
+      "username" -> nonEmptyText,
+      "email" -> nonEmptyText,
+      "password" -> nonEmptyText,
+      "password2" -> nonEmptyText,
+      "consent1" -> boolean,
+      "consent2" -> boolean,
+      "consent3" -> boolean,
+      "consent4" -> boolean,
+      "consent5" -> boolean
+    )
+  )
+
   val symptomForm = Form(
     tuple(
       "whichsymptom" -> nonEmptyText,
@@ -68,14 +82,26 @@ object Application extends SessionController {
   }
 
   def infoSheet = Action {
-    Ok(views.html.infosheet())
+    Ok(views.html.infosheet(consentForm, ""))
   }
 
-  def consent = Action {
-    // TODO: [ABC] store consent information from form
-    // TODO: [ABC] go to registration form, not login form
-    // Ok(views.html.register())
-    Ok(views.html.login(loginForm))
+  def consent = Action { implicit request =>
+    consentForm.bindFromRequest.fold(
+      errors => BadRequest(views.html.infosheet(errors, "")),
+      _ => {
+        val (username, email, password, password2, consent1, consent2, consent3, consent4, consent5) = consentForm.bindFromRequest.get
+        if (!(consent1 && consent2 && consent3 && consent4 && consent5)) {
+          BadRequest(views.html.infosheet(consentForm.bindFromRequest, "You must consent to all 5 conditions in order to register."))
+        } else if (!email.contains("@")) {
+          BadRequest(views.html.infosheet(consentForm.bindFromRequest, "Please use a valid e-mail address."))
+        } else if (password != password2) {
+          BadRequest(views.html.infosheet(consentForm.bindFromRequest, "Your 2 passwords did not match, please try again."))
+        } else {
+          // TODO: create person/patient
+          Redirect(routes.Application.login)
+        }
+      }
+    )
   }
 
   def login = Action {

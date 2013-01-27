@@ -1,4 +1,4 @@
--- Patients schema
+-- Users/patients/doctors/admins schema
 
 # --- !Ups
 
@@ -6,9 +6,10 @@ CREATE SEQUENCE person_id_seq; -- for in memory DB or Postgres
 CREATE TABLE person ( -- NOTE: 'user' is not a suitable table name for Postgres
     id integer NOT NULL DEFAULT nextval('person_id_seq'), -- for in memory DB or Postgres
 --    id integer primary key auto_increment, -- for MySQL
-    name varchar(255),
-    password varchar(255),
-    email varchar(255)
+    name varchar(255) NOT NULL,
+    email varchar(255) NOT NULL,
+    password varchar(255) NOT NULL, -- this is a password has, not an actual password
+    salt varchar(255) -- optional salt for use with the password hash
 );
 
 CREATE SEQUENCE admin_id_seq; -- for in memory DB or Postgres
@@ -30,6 +31,13 @@ CREATE TABLE patient (
     id integer NOT NULL DEFAULT nextval('patient_id_seq'), -- for in memory DB or Postgres
 --    id integer primary key auto_increment, -- for MySQL
     personid integer NOT NULL
+--    uniquestudyid integer NOT NULL,
+--    consent1 boolean NOT NULL,
+--    consent2 boolean NOT NULL,
+--    consent3 boolean NOT NULL,
+--    consent4 boolean NOT NULL,
+--    consent5 boolean NOT NULL,
+--    consenttimestamp timestamp NOT NULL
 );
 
 CREATE TABLE doctor_to_patient (
