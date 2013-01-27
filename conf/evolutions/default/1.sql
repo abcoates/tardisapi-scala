@@ -30,14 +30,14 @@ CREATE SEQUENCE patient_id_seq; -- for in memory DB or Postgres
 CREATE TABLE patient (
     id integer NOT NULL DEFAULT nextval('patient_id_seq'), -- for in memory DB or Postgres
 --    id integer primary key auto_increment, -- for MySQL
-    personid integer NOT NULL
---    uniquestudyid integer NOT NULL,
---    consent1 boolean NOT NULL,
---    consent2 boolean NOT NULL,
---    consent3 boolean NOT NULL,
---    consent4 boolean NOT NULL,
---    consent5 boolean NOT NULL,
---    consenttimestamp timestamp NOT NULL
+    personid integer NOT NULL,
+    uniquestudyid bigint NOT NULL,
+    consent1 boolean,
+    consent2 boolean,
+    consent3 boolean,
+    consent4 boolean,
+    consent5 boolean,
+    consenttimestamp timestamp
 );
 
 CREATE TABLE doctor_to_patient (

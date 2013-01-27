@@ -1,18 +1,23 @@
 package models
 
+import scala.util.Random
 import anorm._
 import anorm.SqlParser._
 import play.api.db._
 import play.api.Play.current
+import java.util.Date
 
-case class Patient(id: Long, person: Person)
+case class Patient(id: Long, person: Person, uniquestudyid: Long) {
+  def uniquestudyidAsString = "%12d".format(uniquestudyid)
+}
 
 object Patient {
 
   val patient = {
     get[Long]("id") ~
-      get[Long]("personid") map {
-        case id~personid => Patient(id, Person.select(personid))
+      get[Long]("personid") ~
+        get[Long]("uniquestudyid") map {
+        case id~personid~uniquestudyid => Patient(id, Person.select(personid), uniquestudyid)
       }
   }
 
@@ -20,14 +25,71 @@ object Patient {
     SQL("select * from patient").as(patient *)
   }
 
-  def create(name: String, email: String, password: String): Option[Long] = {
+  def create(name: String, email: String, password: String, consents: List[Boolean]): Option[Long] = {
+    val MaxUniqueStudyId = 1000000000000L
     val personid = Person.create(name, email, password)
     if (personid.isDefined) {
       var id: Option[Long] = None
       DB.withConnection { implicit c =>
-        id = SQL("insert into patient (personid) values ({personid})").on(
-          'personid -> personid.get
+        val random = new Random
+        var uniquestudyid = random.nextLong % MaxUniqueStudyId // unique study ID is twelve digits
+        var notCheckedUnique = true
+        while (notCheckedUnique) {
+          val matches = SQL("select * from patient where uniquestudyid = {uniquestudyid}").on(
+            'uniquestudyid -> uniquestudyid
+          ).as(patient *)
+          if (matches.size > 0) {
+            uniquestudyid = random.nextLong % MaxUniqueStudyId // unique study ID is twelve digits
+          } else {
+            notCheckedUnique = false
+          }
+        }
+        id = SQL("insert into patient (personid, uniquestudyid) values ({personid}, {uniquestudyid})").on(
+          'personid -> personid.get,
+          'uniquestudyid -> uniquestudyid
         ).executeInsert()
+      }
+      val timestamp = new Date
+      if (consents.size >= 1) {
+        DB.withConnection { implicit c =>
+          SQL("update patient set consenttimestamp = {timestamp}, consent1 = {consent1} where personid = {personid}").on(
+            'personid -> personid.get,
+            'timestamp -> timestamp,
+            'consent1 -> consents(0)
+          ).executeUpdate()
+        }
+      }
+      if (consents.size >= 2) {
+        DB.withConnection { implicit c =>
+          SQL("update patient set consent2 = {consent2} where personid = {personid}").on(
+            'personid -> personid.get,
+            'consent2 -> consents(1)
+          ).executeUpdate()
+        }
+      }
+      if (consents.size >= 3) {
+        DB.withConnection { implicit c =>
+          SQL("update patient set consent3 = {consent3} where personid = {personid}").on(
+            'personid -> personid.get,
+            'consent3 -> consents(2)
+          ).executeUpdate()
+        }
+      }
+      if (consents.size >= 4) {
+        DB.withConnection { implicit c =>
+          SQL("update patient set consent4 = {consent4} where personid = {personid}").on(
+            'personid -> personid.get,
+            'consent4 -> consents(3)
+          ).executeUpdate()
+        }
+      }
+      if (consents.size >= 5) {
+        DB.withConnection { implicit c =>
+          SQL("update patient set consent5 = {consent5} where personid = {personid}").on(
+            'personid -> personid.get,
+            'consent5 -> consents(4)
+          ).executeUpdate()
+        }
       }
       id
     } else {

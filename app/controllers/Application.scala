@@ -97,7 +97,7 @@ object Application extends SessionController {
         } else if (password != password2) {
           BadRequest(views.html.infosheet(consentForm.bindFromRequest, "Your 2 passwords did not match, please try again."))
         } else {
-          val patientid = Patient.create(username, email, password)
+          val patientid = Patient.create(username, email, password, List(consent1, consent2, consent3, consent4, consent5))
           if (patientid.isDefined) {
             Redirect(routes.Application.selectPatient(patientid.get)).withSession("personid" -> patientid.get.toString)
           } else {
@@ -116,9 +116,20 @@ object Application extends SessionController {
     }
   }
 
-  def checkLogin = Action {
-    // TODO: [ABC] add some actual validate code here
-    Redirect(routes.Application.login)
+  def checkLogin = Action { implicit request =>
+    loginForm.bindFromRequest.fold(
+      errors => BadRequest(views.html.login(errors)),
+      _ => {
+        val (email, password) = loginForm.bindFromRequest.get
+        val person = Person.selectByEmail(email)
+        if (person isDefined) {
+          // TODO: check password
+          Redirect(routes.Application.selectPerson(person.get.id)).withSession("personid" -> person.get.id.toString)
+        } else {
+          BadRequest(views.html.login(loginForm))
+        }
+      }
+    )
   }
 
   def logout = Action {
@@ -196,7 +207,7 @@ object Application extends SessionController {
       errors => BadRequest(views.html.patients(Patient.all(), errors)),
       _ => {
         val (username, password, email) = personForm.bindFromRequest.get
-        Patient.create(username, email, password)
+        Patient.create(username, email, password, List[Boolean]()) // TODO: should this be allowed, no consents?
         Redirect(routes.Application.patients)
       }
     )
