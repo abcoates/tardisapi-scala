@@ -4,7 +4,6 @@ import anorm._
 import anorm.SqlParser._
 import play.api.db._
 import play.api.Play.current
-import play.api.Logger
 
 case class Administrator(id: Long, person: Person)
 
@@ -22,7 +21,7 @@ object Administrator {
   }
 
   def create(name: String, password: String, email: String): Option[Long] = {
-    val personid = Person.create(name, password, email)
+    val personid = Person.create(name, email, password)
     if (personid.isDefined) {
       var id: Option[Long] = None
       DB.withConnection { implicit c =>

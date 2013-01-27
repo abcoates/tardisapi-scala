@@ -8,8 +8,7 @@
 
 <table>
     <tr style="border: black solid 1px;">
-        <th style="border: black solid 1px;">User name</th>
-        <th style="border: black solid 1px;">Password</th>
+        <th style="border: black solid 1px;">Name</th>
         <th style="border: black solid 1px;">Email</th>
         <th style="border: black solid 1px;"># symptoms</th>
         <th style="border: black solid 1px;"># events</th>
@@ -19,7 +18,6 @@
     @patients.map { patient =>
     <tr style="border: black solid 1px;">
         <td style="border: black solid 1px;">@patient.person.name</td>
-        <td style="border: black solid 1px;">@patient.person.password</td>
         <td style="border: black solid 1px;">@patient.person.email</td>
         <td style="border: black solid 1px; text-align:right;">@Symptom.all(patient.id).size</td>
         <td style="border: black solid 1px; text-align:right;">@Event.all(patient.id).size</td>
@@ -35,7 +33,7 @@
 
 <p style="margin-top:2ex;"><a href="@routes.Application.persons">Click to go back to 'all users'.</a></p>
 
-<h2>Add a new patient</h2>
+<h2 style="margin-top:2ex;">Add a new patient</h2>
 
 @form(routes.Application.newPatient) {
 

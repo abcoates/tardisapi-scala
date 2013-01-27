@@ -1,9 +1,11 @@
 package models
 
+import scala.util.Random
 import anorm._
 import anorm.SqlParser._
 import play.api.db._
 import play.api.Play.current
+import com.roundeights.hasher.Implicits._
 
 case class Person(id: Long, name: String, password: String, email: String)
 
@@ -22,13 +24,26 @@ object Person {
     SQL("select * from person").as(person *)
   }
 
-  def create(name: String, password: String, email: String): Option[Long] = {
+  def create(name: String, email: String, password: String): Option[Long] = {
+    val SaltLength = 8
+    val salt = new StringBuilder
+    val random = new Random()
+    val trimPassword = password.trim
+    for (idx <- 1 to SaltLength) {
+      val index = random.nextInt(trimPassword length)
+      salt.append(trimPassword.charAt(index))
+    }
+    create(name, email, password, salt toString)
+  }
+
+  def create(name: String, email: String, password: String, salt: String): Option[Long] = {
     var id: Option[Long] = None
     DB.withConnection { implicit c =>
-      id = SQL("insert into person (name, password, email) values ({name}, {password}, {email})").on(
-        'name -> name,
-        'password -> password,
-        'email -> email
+      id = SQL("insert into person (name, email, password, salt) values ({name}, {email}, {password}, {salt})").on(
+        'name -> name.trim,
+        'email -> email.trim,
+        'password -> password.trim.salt(salt).sha512.toString,
+        'salt -> salt
       ).executeInsert()
     }
     id

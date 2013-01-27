@@ -8,26 +8,18 @@
 
 <table>
     <tr style="border: black solid 1px;">
-        <th style="border: black solid 1px;">User name</th>
-        <th style="border: black solid 1px;">Password</th>
+        <th style="border: black solid 1px;">Name</th>
         <th style="border: black solid 1px;">Email</th>
-        <th style="border: black solid 1px;">Delete</th>
     </tr>
     <tr style="border: black solid 1px;">
         <td style="border: black solid 1px;">@patient.person.name</td>
-        <td style="border: black solid 1px;">@patient.person.password</td>
         <td style="border: black solid 1px;">@patient.person.email</td>
-        <td style="border: black solid 1px;">
-            @form(routes.Application.deletePatient(patient.person.id)) {
-            <input type="submit" value="Delete">
-            }
-        </td>
     </tr>
 </table>
 
 <p><a href="@routes.Application.patients">Click to go back to 'all patients'.</a></p>
 
-<h2>@symptoms.size symptom(s)</h2>
+<h2 style="margin-top:2ex;">@symptoms.size symptom(s)</h2>
 <table>
     <tr style="border: black solid 1px;">
         <th style="border: black solid 1px;">Which symptom</th>
@@ -49,7 +41,7 @@
     }
 </table>
 
-<h2>Add a new symptom</h2>
+<h2 style="margin-top:2ex;">Add a new symptom</h2>
 
 @form(routes.Application.newSymptom(patient.id)) {
 
@@ -63,7 +55,7 @@
 
 <p><a href="@routes.Application.patients">Click to go back to 'all patients'.</a></p>
 
-<h2>@events.size event(s)</h2>
+<h2 style="margin-top:2ex;">@events.size event(s)</h2>
 <table>
     <tr style="border: black solid 1px;">
         <th style="border: black solid 1px;">Event name</th>
@@ -85,7 +77,7 @@
     }
 </table>
 
-<h2>Add a new Event</h2>
+<h2 style="margin-top:2ex;">Add a new Event</h2>
 
 @form(routes.Application.newEvent(patient.id)) {
 
@@ -98,7 +90,7 @@
 }
 
 <!-- TODO: [ABC] work out what these reports should be like -->
-<h2>View your reports</h2>
+<h2 style="margin-top:2ex;">View your reports</h2>
 <p><input type="submit" value="View Reports" style="width:200px; height:40px; color:white; background:orange;  "></p>
 
 <p><a href="@routes.Application.patients">Click to go back to 'all patients'.</a></p>

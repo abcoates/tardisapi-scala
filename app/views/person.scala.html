@@ -13,19 +13,17 @@
         <th style="border: black solid 1px;">Patient?</th>
         <th style="border: black solid 1px;">Doctor?</th>
         <th style="border: black solid 1px;">Admin?</th>
-        <th style="border: black solid 1px;">Delete</th>
     </tr>
     <tr style="border: black solid 1px;">
         <td style="border: black solid 1px;">@person.name</td>
         <td style="border: black solid 1px;">@person.email</td>
-        <td style="border: black solid 1px; text-align:right;">@Patient.select(person.id).isDefined</td>
+        @if(Patient.select(person.id).isDefined) {
+        <td style="border: black solid 1px; text-align:right;"><a href="@routes.Application.selectPatient(person.id)">true</a></td>
+        } else {
+        <td style="border: black solid 1px; text-align:right;">false</td>
+        }
         <td style="border: black solid 1px; text-align:right;">@Doctor.select(person.id).isDefined</td>
         <td style="border: black solid 1px; text-align:right;">@Administrator.select(person.id).isDefined</td>
-        <td style="border: black solid 1px;">
-            @form(routes.Application.deletePerson(person.id)) {
-            <input type="submit" value="Delete">
-            }
-        </td>
     </tr>
 </table>
 

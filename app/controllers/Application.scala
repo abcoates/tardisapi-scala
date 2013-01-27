@@ -82,7 +82,7 @@ object Application extends SessionController {
   }
 
   def infoSheet = Action {
-    Ok(views.html.infosheet(consentForm, ""))
+    Ok(views.html.infosheet(consentForm, "")).withNewSession
   }
 
   def consent = Action { implicit request =>
@@ -92,25 +92,37 @@ object Application extends SessionController {
         val (username, email, password, password2, consent1, consent2, consent3, consent4, consent5) = consentForm.bindFromRequest.get
         if (!(consent1 && consent2 && consent3 && consent4 && consent5)) {
           BadRequest(views.html.infosheet(consentForm.bindFromRequest, "You must consent to all 5 conditions in order to register."))
-        } else if (!email.contains("@")) {
+        } else if (!(email.contains("@") && (email.trim.replaceAll("\\s+", "") == email.trim))) {
           BadRequest(views.html.infosheet(consentForm.bindFromRequest, "Please use a valid e-mail address."))
         } else if (password != password2) {
           BadRequest(views.html.infosheet(consentForm.bindFromRequest, "Your 2 passwords did not match, please try again."))
         } else {
-          // TODO: create person/patient
-          Redirect(routes.Application.login)
+          val patientid = Patient.create(username, email, password)
+          if (patientid.isDefined) {
+            Redirect(routes.Application.selectPatient(patientid.get)).withSession("personid" -> patientid.get.toString)
+          } else {
+            Redirect(routes.Application.login)
+          }
         }
       }
     )
   }
 
-  def login = Action {
-    Ok(views.html.login(loginForm))
+  def login = Action { implicit request =>
+    session.get("personid").map { personid =>
+      Redirect(routes.Application.selectPerson(personid.toLong))
+    }.getOrElse {
+      Ok(views.html.login(loginForm))
+    }
   }
 
   def checkLogin = Action {
     // TODO: [ABC] add some actual validate code here
     Redirect(routes.Application.login)
+  }
+
+  def logout = Action {
+    Redirect(routes.Application.startHere).withNewSession
   }
 
   def persons = checkLoggedIn(Action { request =>
@@ -184,7 +196,7 @@ object Application extends SessionController {
       errors => BadRequest(views.html.patients(Patient.all(), errors)),
       _ => {
         val (username, password, email) = personForm.bindFromRequest.get
-        Patient.create(username, password, email)
+        Patient.create(username, email, password)
         Redirect(routes.Application.patients)
       }
     )
