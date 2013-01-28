@@ -7,16 +7,19 @@ import play.api.db._
 import play.api.Play.current
 import com.roundeights.hasher.Implicits._
 
-case class Person(id: Long, name: String, password: String, email: String)
+case class Person(id: Long, name: String, email: String, password: String, salt: String) {
+  def checkPassword(aPassword: String): Boolean = aPassword.trim.salt(salt).sha512.toString == password
+}
 
 object Person {
 
   val person = {
     get[Long]("id") ~
       get[String]("name") ~
-        get[String]("password") ~
-          get[String]("email") map {
-            case id~name~password~email => Person(id, name, password, email)
+        get[String]("email") ~
+          get[String]("password") ~
+            get[String]("salt") map {
+            case id~name~email~password~salt => Person(id, name, email, password, salt)
           }
   }
 

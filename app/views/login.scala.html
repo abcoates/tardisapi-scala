@@ -1,8 +1,12 @@
-@(loginForm: Form[Tuple2[String, String]])
+@(loginForm: Form[Tuple2[String, String]], message: String)
 
 @import helper._
 
 @main("TARDIS >> Login") {
+
+@if((message != null) && (message.length >= 1)) {
+<h4 style="color:red; border: solid 1px red; margin-bottom: 2ex;">@message</h4>
+}
 
 <h1>Please Login</h1>
 

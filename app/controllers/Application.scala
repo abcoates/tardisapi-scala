@@ -112,21 +112,24 @@ object Application extends SessionController {
     session.get("personid").map { personid =>
       Redirect(routes.Application.selectPerson(personid.toLong))
     }.getOrElse {
-      Ok(views.html.login(loginForm))
+      Ok(views.html.login(loginForm, ""))
     }
   }
 
   def checkLogin = Action { implicit request =>
     loginForm.bindFromRequest.fold(
-      errors => BadRequest(views.html.login(errors)),
+      errors => BadRequest(views.html.login(errors, "")),
       _ => {
         val (email, password) = loginForm.bindFromRequest.get
         val person = Person.selectByEmail(email)
         if (person isDefined) {
-          // TODO: check password
-          Redirect(routes.Application.selectPerson(person.get.id)).withSession("personid" -> person.get.id.toString)
+          if (person.get.checkPassword(password)) {
+            Redirect(routes.Application.selectPerson(person.get.id)).withSession("personid" -> person.get.id.toString)
+          } else {
+            BadRequest(views.html.login(loginForm.bindFromRequest, "Your e-mail and password did not match, please try again."))
+          }
         } else {
-          BadRequest(views.html.login(loginForm))
+          BadRequest(views.html.login(loginForm, ""))
         }
       }
     )
