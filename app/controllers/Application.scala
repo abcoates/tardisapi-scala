@@ -20,6 +20,9 @@ trait SessionController extends Controller {
 
 object Application extends SessionController {
 
+  val RESULT_OK = "OK"
+  val RESULT_FAIL = "FAIL"
+
   val JsonMimeType = "application/json"
 
   val loginForm = Form(
@@ -117,26 +120,70 @@ object Application extends SessionController {
   }
 
   def checkLogin = Action { implicit request =>
+    val isJSON = request.headers.get("accept").getOrElse("").equals(JsonMimeType)
     loginForm.bindFromRequest.fold(
-      errors => BadRequest(views.html.login(errors, "")),
-      _ => {
+      errors =>
+        if (isJSON) {
+          BadRequest(toJson(Map(
+            "status" -> RESULT_FAIL,
+            "errorCode" -> "checkLogin:fold:fail",
+            "errorDetails" -> "There was a problem at the server in interpreting the login details."
+          )))
+        } else {
+          BadRequest(views.html.login(errors, ""))
+        },
+    _ => {
         val (email, password) = loginForm.bindFromRequest.get
         val person = Person.selectByEmail(email)
         if (person isDefined) {
           if (person.get.checkPassword(password)) {
-            Redirect(routes.Application.selectPerson(person.get.id)).withSession("personid" -> person.get.id.toString)
+            if (isJSON) {
+              Ok(toJson(Map(
+                "status" -> toJson(RESULT_OK),
+                "personid" -> toJson(person.get.id)
+              )))
+            } else {
+              Redirect(routes.Application.selectPerson(person.get.id)).withSession("personid" -> person.get.id.toString)
+            }
           } else {
-            BadRequest(views.html.login(loginForm.bindFromRequest, "Your e-mail and password did not match, please try again."))
+            if (isJSON) {
+              BadRequest(toJson(Map(
+                "status" -> RESULT_FAIL,
+                "errorCode" -> "checkLogin:password:nomatch",
+                "errorDetails" -> "The login e-mail address and password did not match.",
+                "email" -> email,
+                "password" -> password
+              )))
+            } else {
+              BadRequest(views.html.login(loginForm.bindFromRequest, "Your e-mail and password did not match, please try again."))
+            }
           }
         } else {
-          BadRequest(views.html.login(loginForm, ""))
+          if (isJSON) {
+            BadRequest(toJson(Map(
+              "status" -> RESULT_FAIL,
+              "errorCode" -> "checkLogin:email:nosuchuser",
+              "errorDetails" -> "The login e-mail address does not match a registered user.",
+              "email" -> email,
+              "password" -> password
+            )))
+          } else {
+            BadRequest(views.html.login(loginForm, ""))
+          }
         }
       }
     )
   }
 
-  def logout = Action {
-    Redirect(routes.Application.startHere).withNewSession
+  def logout = Action { implicit request =>
+    val isJSON = request.headers.get("accept").getOrElse("").equals(JsonMimeType)
+    if (isJSON) {
+      Ok(toJson(Map(
+        "status" -> RESULT_OK
+      )))
+    } else {
+      Redirect(routes.Application.startHere).withNewSession
+    }
   }
 
   def persons = checkLoggedIn(Action { request =>
