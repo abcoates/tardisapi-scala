@@ -29,6 +29,9 @@ Logging In and Out
 <tbody>
 <tr><td><code>status</code></td><td>String = 'OK' or 'FAIL'</td><td>Whether the login request succeeded or failed.</td></tr>
 <tr><td><code>personid</code></td><td>Positive Integer</td><td>If 'status' is 'OK', the ID number of the person who logged in.</td></tr>
+<tr><td><code>isPatient</code></td><td>Boolean</td><td>If 'status' is 'OK', whether the person who logged in is a patient.</td></tr>
+<tr><td><code>isDoctor</code></td><td>Boolean</td><td>If 'status' is 'OK', whether the person who logged in is a doctor.</td></tr>
+<tr><td><code>isAdmin</code></td><td>Boolean</td><td>If 'status' is 'OK', whether the person who logged in is an administrator.</td></tr>
 <tr><td><code>errorCode</code></td><td>String</td><td>If 'status' is 'FAIL', the error code.</td></tr>
 <tr><td><code>errorDetails</code></td><td>String</td><td>If 'status' is 'FAIL', a human readable description of the error.</td></tr>
 <tr><td><code>email</code></td><td>String</td><td>If 'status' is 'FAIL', e-mail address from the form post, if available.</td></tr>

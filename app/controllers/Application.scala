@@ -140,7 +140,10 @@ object Application extends SessionController {
             if (isJSON) {
               Ok(toJson(Map(
                 "status" -> toJson(RESULT_OK),
-                "personid" -> toJson(person.get.id)
+                "personid" -> toJson(person.get.id),
+                "isPatient" -> toJson(Patient.select(person.get.id).isDefined),
+                "isDoctor" -> toJson(Doctor.select(person.get.id).isDefined),
+                "isAdmin" -> toJson(Administrator.select(person.get.id).isDefined)
               )))
             } else {
               Redirect(routes.Application.selectPerson(person.get.id)).withSession("personid" -> person.get.id.toString)
