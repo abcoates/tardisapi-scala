@@ -12,7 +12,7 @@ object Administrator {
   val admin = {
     get[Long]("id") ~
       get[Long]("personid") map {
-      case id~personid => Administrator(id, Person.select(personid))
+      case id~personid => Administrator(id, Person.select(personid).get)
     }
   }
 

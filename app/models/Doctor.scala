@@ -12,7 +12,7 @@ object Doctor {
   val doctor = {
     get[Long]("id") ~
       get[Long]("personid") map {
-      case id~personid => Doctor(id, Person.select(personid))
+      case id~personid => Doctor(id, Person.select(personid).get)
     }
   }
 

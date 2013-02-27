@@ -17,7 +17,7 @@ object Patient {
     get[Long]("id") ~
       get[Long]("personid") ~
         get[Long]("uniquestudyid") map {
-        case id~personid~uniquestudyid => Patient(id, Person.select(personid), uniquestudyid)
+        case id~personid~uniquestudyid => Patient(id, Person.select(personid).get, uniquestudyid)
       }
   }
 
@@ -101,6 +101,14 @@ object Patient {
     DB.withConnection { implicit c =>
       SQL("select * from patient where personid = {personid}").on(
         'personid -> personid
+      ).as(patient *)
+    }.headOption
+  }
+
+  def selectByPatientId(id: Long): Option[Patient] = {
+    DB.withConnection { implicit c =>
+      SQL("select * from patient where id = {id}").on(
+        'id -> id
       ).as(patient *)
     }.headOption
   }

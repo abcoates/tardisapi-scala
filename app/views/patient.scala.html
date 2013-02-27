@@ -1,6 +1,8 @@
-@(patient: Patient, symptoms: List[Symptom], events: List[Event], symptomForm: Form[Tuple2[String, String]], eventForm: Form[Tuple2[String, String]])
+@(patient: Patient, symptoms: List[Symptom], events: List[Event], symptomForm: Form[Tuple2[String, java.util.Date]], eventForm: Form[Tuple2[String, java.util.Date]])
 
 @import helper._
+@import java.util.Date
+@import java.text.SimpleDateFormat
 
 @main("TARDIS >> Patient: " + patient.person.name) {
 
@@ -30,8 +32,8 @@
     @symptoms.map { symptom =>
     <tr style="border: black solid 1px;">
         <td style="border: black solid 1px;">@symptom.whichsymptom</td>
-        <td style="border: black solid 1px;">@symptom.whensymptom</td>
-        <td style="border: black solid 1px;"><a href="@routes.Application.selectSymptom(patient.id, symptom.id)">View</a></td>
+        <td style="border: black solid 1px;">@symptom.whensymptomAsString</td>
+        <td style="border: black solid 1px;"><a href="@routes.Application.selectSymptom(patient.person.id, symptom.id)">View</a></td>
         <td style="border: black solid 1px;">
             @form(routes.Application.deleteSymptom(patient.id, symptom.id)) {
             <input type="submit" value="Delete">
@@ -43,10 +45,11 @@
 
 <h2 style="margin-top:2ex;">Add a new symptom</h2>
 
-@form(routes.Application.newSymptom(patient.id)) {
+@form(routes.Application.newSymptom(patient.person.id)) {
 
 @inputText(symptomForm("whichsymptom"))
-@inputText(symptomForm("whensymptom"))
+@inputDate(symptomForm("whensymptom"))
+<!-- TODO: add time input (to nearest quarter hour) -->
 
 <!-- TODO: [ABC] add some Javascript to clear value when user first types? -->
 <p><input type="submit" value="Enter Symptom" style="width:200px; height:40px; color:white; background:blue;"></p>
@@ -66,8 +69,8 @@
     @events.map { event =>
     <tr style="border: black solid 1px;">
         <td style="border: black solid 1px;">@event.eventname</td>
-        <td style="border: black solid 1px;">@event.eventtime</td>
-        <td style="border: black solid 1px;"><a href="@routes.Application.selectEvent(patient.id, event.id)">View</a></td>
+        <td style="border: black solid 1px;">@event.eventtimeAsString</td>
+        <td style="border: black solid 1px;"><a href="@routes.Application.selectEvent(patient.person.id, event.id)">View</a></td>
         <td style="border: black solid 1px;">
             @form(routes.Application.deleteEvent(patient.id, event.id)) {
             <input type="submit" value="Delete">
@@ -79,10 +82,10 @@
 
 <h2 style="margin-top:2ex;">Add a new Event</h2>
 
-@form(routes.Application.newEvent(patient.id)) {
+@form(routes.Application.newEvent(patient.person.id)) {
 
 @inputText(eventForm("eventname"))
-@inputText(eventForm("eventtime"))
+@inputDate(eventForm("eventtime"))
 
 <!-- TODO: [ABC] add some Javascript to clear value when user first types? -->
 <p><input type="submit" value="Enter Event" style="width:200px; height:40px; color:white; background:#32cd32;  "></p>

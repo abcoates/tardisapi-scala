@@ -4,8 +4,14 @@ import anorm._
 import anorm.SqlParser._
 import play.api.db._
 import play.api.Play.current
+import java.util.Date
+import java.text.SimpleDateFormat
 
-case class Event(id: Long, patientid: Long, eventname: String, eventtime: String)
+case class Event(id: Long, patient: Patient, eventname: String, eventtime: Date) {
+
+  def eventtimeAsString = Event.dateFormatter.format(eventtime)
+
+}
 
 object Event {
 
@@ -13,17 +19,19 @@ object Event {
     get[Long]("id") ~
       get[Long]("patientid") ~
         get[String]("eventname") ~
-          get[String]("eventtime") map {
-            case id~patientid~eventname~eventtime => Event(id, patientid, eventname, eventtime)
+          get[Date]("eventtime") map {
+            case id~patientid~eventname~eventtime => Event(id, Patient.selectByPatientId(patientid).get, eventname, eventtime)
           }
   }
 
+  val dateFormatter = new SimpleDateFormat("dd MMM yyyy")
+
   def all(patientid: Long): List[Event] = DB.withConnection { implicit c =>
     val allEvents = SQL("select * from event").as(event *)
-    allEvents.filter((e: Event) => e.patientid.equals(patientid))
+    allEvents.filter((e: Event) => e.patient.id.equals(patientid))
   }
 
-  def create(patientid: Long, eventname: String, eventtime: String) {
+  def create(patientid: Long, eventname: String, eventtime: Date) {
     DB.withConnection { implicit c =>
       SQL("insert into event (patientid, eventname, eventtime) values ({patientid}, {eventname}, {eventtime})").on(
         'patientid -> patientid,

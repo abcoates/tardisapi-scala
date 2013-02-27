@@ -27,17 +27,19 @@ GET     /patients/:id                           controllers.Application.selectPa
 POST    /patients                               controllers.Application.newPatient
 POST    /patients/:id/delete                    controllers.Application.deletePatient(id: Long)
 
-GET     /users/:userid/symptoms/:id             controllers.Application.selectSymptom(userid: Long, id: Long)
-POST    /users/:userid/symptoms                 controllers.Application.newSymptom(userid: Long)
-POST    /users/:userid/symptoms/:id/delete      controllers.Application.deleteSymptom(userid: Long, id: Long)
+GET     /patients/:userid/symptoms/:id          controllers.Application.selectSymptom(userid: Long, id: Long)
+POST    /patients/:userid/symptoms              controllers.Application.newSymptom(userid: Long)
+POST    /patients/:userid/symptoms/:id/delete   controllers.Application.deleteSymptom(userid: Long, id: Long)
 
-GET     /users/:userid/events/:id               controllers.Application.selectEvent(userid: Long, id: Long)
-POST    /users/:userid/events                   controllers.Application.newEvent(userid: Long)
-POST    /users/:userid/events/:id/delete        controllers.Application.deleteEvent(userid: Long, id: Long)
+GET     /patients/:userid/events/:id            controllers.Application.selectEvent(userid: Long, id: Long)
+POST    /patients/:userid/events                controllers.Application.newEvent(userid: Long)
+POST    /patients/:userid/events/:id/delete     controllers.Application.deleteEvent(userid: Long, id: Long)
 
 # Mobile API
 POST    /mobile/v1/login                        controllers.Application.checkLogin
 GET     /mobile/v1/logout                       controllers.Application.logout
+POST    /mobile/v1/users/:userid/symptoms       controllers.Application.newSymptom(userid: Long)
+POST    /mobile/v1/users/:userid/events         controllers.Application.newEvent(userid: Long)
 
 # Default
 GET     /*unknown                               controllers.Application.default(unknown: String)

@@ -51,7 +51,7 @@ CREATE TABLE symptom (
 --    id integer primary key auto_increment, -- for MySQL
     patientid integer NOT NULL,
     whichsymptom varchar(255),
-    whensymptom varchar(255)
+    whensymptom timestamp -- date/time to the nearest quarter hour
 );
 
 CREATE SEQUENCE event_id_seq; -- for in memory DB or Postgres
@@ -60,7 +60,7 @@ CREATE TABLE event (
 --    id integer primary key auto_increment, -- for MySQL
     patientid integer NOT NULL,
     eventname varchar(255),
-    eventtime varchar(255)
+    eventtime date
 );
 
 # --- !Downs

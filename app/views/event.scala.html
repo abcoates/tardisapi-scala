@@ -1,10 +1,12 @@
-@(event: Event, eventForm: Form[Tuple2[String, String]])
+@(event: Event)
 
 @import helper._
+@import java.util.Date
+@import java.text.SimpleDateFormat
 
-@main("TARDIS >> User: #" + event.patientid + " - Event: #" + event.id) {
+@main("TARDIS >> Patient: " + event.patient.person.name + " - Event: #" + event.id) {
 
-<h1>User #@event.patientid - Event #@event.id</h1>
+<h1>Patient: @event.patient.person.name - Event #@event.id</h1>
 
 <table>
     <tr style="border: black solid 1px;">
@@ -14,15 +16,15 @@
     </tr>
     <tr style="border: black solid 1px;">
         <td style="border: black solid 1px;">@event.eventname</td>
-        <td style="border: black solid 1px;">@event.eventtime</td>
+        <td style="border: black solid 1px;">@event.eventtimeAsString</td>
         <td style="border: black solid 1px;">
-            @form(routes.Application.deleteEvent(event.patientid, event.id)) {
+            @form(routes.Application.deleteEvent(event.patient.id, event.id)) {
                 <input type="submit" value="Delete">
             }
         </td>
     </tr>
 </table>
 
-<p><a href="@routes.Application.selectPatient(event.patientid)">Click to go back to user details.</a></p>
+<p><a href="@routes.Application.selectPatient(event.patient.person.id)">Click to go back to user details.</a></p>
 
 }
