@@ -40,6 +40,16 @@ echo Get patient events ...
 call get-events.bat %USER_ID%
 echo.
 
+rem !! Need to set up event IDs manually.
+set EVENT_IDS=1
+
+for /f %%s in ( "%EVENT_IDS%" ) do (
+echo.
+echo Get patient event #%%s ...
+call get-event %USER_ID% %%s
+echo.
+)
+
 echo.
 echo Logging out ...
 call mobile-logout.bat

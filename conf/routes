@@ -42,7 +42,7 @@ POST    /mobile/v1/login                        controllers.Application.checkLog
 GET     /mobile/v1/logout                       controllers.Application.logout
 GET     /mobile/v1/patients/:userid             controllers.Application.selectPatient(userid: Long)
 GET     /mobile/v1/patients/:userid/symptoms    controllers.Application.symptoms(userid: Long)
-GET     /mobile/v1/patients/:userid/symptom/:id controllers.Application.selectSymptom(userid: Long, id: Long)
+GET     /mobile/v1/patients/:userid/symptoms/:id controllers.Application.selectSymptom(userid: Long, id: Long)
 GET     /mobile/v1/patients/:userid/events      controllers.Application.events(userid: Long)
 GET     /mobile/v1/patients/:userid/events/:id  controllers.Application.selectEvent(userid: Long, id: Long)
 POST    /mobile/v1/patients/:userid/symptoms    controllers.Application.newSymptom(userid: Long)

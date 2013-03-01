@@ -195,6 +195,7 @@ object Application extends SessionController {
     if (request.headers.get("accept").getOrElse("").equals(JsonMimeType)) {
       val personDetails = Person.all().map {
         person => Map(
+          "status" -> toJson(RESULT_OK),
           "userid" -> toJson(person.id),
           "username" -> toJson(person.name),
           "email" -> toJson(person.email)
@@ -221,6 +222,7 @@ object Application extends SessionController {
     val person = Person.select(id).get // TODO: add code to deal with non-existent person ID
     if (request.headers.get("accept").getOrElse("").equals(JsonMimeType)) {
       val personDetails = Map(
+        "status" -> toJson(RESULT_OK),
         "userid" -> toJson(person.id),
         "username" -> toJson(person.name),
         "email" -> toJson(person.email)
@@ -243,6 +245,7 @@ object Application extends SessionController {
     if (request.headers.get("accept").getOrElse("").equals(JsonMimeType)) {
       val patientDetails = Patient.all().map {
         patient => Map(
+          "status" -> toJson(RESULT_OK),
           "userid" -> toJson(patient.person.id),
           "username" -> toJson(patient.person.name),
           "email" -> toJson(patient.person.email),
@@ -272,6 +275,7 @@ object Application extends SessionController {
     val patient = Patient.select(id).get
     if (request.headers.get("accept").getOrElse("").equals(JsonMimeType)) {
       val patientDetails = Map(
+        "status" -> toJson(RESULT_OK),
         "userid" -> toJson(patient.person.id),
         "username" -> toJson(patient.person.name),
         "email" -> toJson(patient.person.email),
@@ -337,6 +341,7 @@ object Application extends SessionController {
     val patient = Patient.select(personid).get
     if (request.headers.get("accept").getOrElse("").equals(JsonMimeType)) {
       val patientSymptomDetails = Map(
+        "status" -> toJson(RESULT_OK),
         "userid" -> toJson(patient.person.id),
         "username" -> toJson(patient.person.name),
         "email" -> toJson(patient.person.email),
@@ -354,6 +359,7 @@ object Application extends SessionController {
     if (symptom.patient.id == patient.id) {
       if (request.headers.get("accept").getOrElse("").equals(JsonMimeType)) {
         val symptomDetails = Map(
+          "status" -> toJson(RESULT_OK),
           "symptomid" -> toJson(symptom.id),
           "userid" -> toJson(symptom.patient.person.id),
           "whichsymptom" -> toJson(symptom.whichsymptom),
@@ -429,6 +435,7 @@ object Application extends SessionController {
     val patient = Patient.select(id).get
     if (request.headers.get("accept").getOrElse("").equals(JsonMimeType)) {
       val patientEventDetails = Map(
+        "status" -> toJson(RESULT_OK),
         "userid" -> toJson(patient.person.id),
         "username" -> toJson(patient.person.name),
         "email" -> toJson(patient.person.email),
@@ -446,6 +453,7 @@ object Application extends SessionController {
     if (event.patient.id == patient.id) {
       if (request.headers.get("accept").getOrElse("").equals(JsonMimeType)) {
         val eventDetails = Map(
+          "status" -> toJson(RESULT_OK),
           "eventid" -> toJson(event.id),
           "userid" -> toJson(event.patient.person.id),
           "eventname" -> toJson(event.eventname),
