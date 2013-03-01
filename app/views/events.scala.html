@@ -1,12 +1,16 @@
-@(patient: Patient, symptoms: List[Symptom], events: List[Event], symptomForm: Form[Tuple2[String, java.util.Date]], eventForm: Form[Tuple2[String, java.util.Date]])
+@(patient: Patient, events: List[Event], eventForm: Form[Tuple2[String, java.util.Date]], message: String)
 
 @import helper._
 @import java.util.Date
 @import java.text.SimpleDateFormat
 
-@main("TARDIS >> Patient: " + patient.person.name) {
+@main("TARDIS >> Patient: " + patient.person.name + " - Events") {
 
-<h1>Patient: @patient.person.name</h1>
+@if((message != null) && (message.length >= 1)) {
+<h4 style="color:red; border: solid 1px red; margin-bottom: 2ex;">@message</h4>
+}
+
+<h1>Patient: @patient.person.name - Events</h1>
 
 <table>
     <tr style="border: black solid 1px;">
@@ -19,44 +23,7 @@
     </tr>
 </table>
 
-<p style="margin-top:2ex;"><a href="@routes.Application.patients">Click to go back to 'all patients'.</a></p>
-
-<h2 style="margin-top:2ex;">@symptoms.size symptom(s)</h2>
-<table>
-    <tr style="border: black solid 1px;">
-        <th style="border: black solid 1px;">Which symptom</th>
-        <th style="border: black solid 1px;">When symptom</th>
-        <th style="border: black solid 1px;">View</th>
-        <th style="border: black solid 1px;">Delete</th>
-    </tr>
-    @symptoms.map { symptom =>
-    <tr style="border: black solid 1px;">
-        <td style="border: black solid 1px;">@symptom.whichsymptom</td>
-        <td style="border: black solid 1px;">@symptom.whensymptomAsString</td>
-        <td style="border: black solid 1px;"><a href="@routes.Application.selectSymptom(patient.person.id, symptom.id)">View</a></td>
-        <td style="border: black solid 1px;">
-            @form(routes.Application.deleteSymptom(patient.id, symptom.id)) {
-            <input type="submit" value="Delete">
-            }
-        </td>
-    </tr>
-    }
-</table>
-
-<h2 style="margin-top:2ex;">Add a new symptom</h2>
-
-@form(routes.Application.newSymptom(patient.person.id)) {
-
-@inputText(symptomForm("whichsymptom"))
-@inputDate(symptomForm("whensymptom"))
-<!-- TODO: add time input (to nearest quarter hour) -->
-
-<!-- TODO: [ABC] add some Javascript to clear value when user first types? -->
-<p><input type="submit" value="Enter Symptom" style="width:200px; height:40px; color:white; background:blue;"></p>
-
-}
-
-<p style="margin-top:2ex;"><a href="@routes.Application.patients">Click to go back to 'all patients'.</a></p>
+<p style="margin-top:2ex;"><a href="@routes.Application.selectPatient(patient.person.id)">Click to go back to all patient details.</a></p>
 
 <h2 style="margin-top:2ex;">@events.size event(s)</h2>
 <table>
@@ -96,6 +63,6 @@
 <h2 style="margin-top:2ex;">View your reports</h2>
 <p><input type="submit" value="View Reports" style="width:200px; height:40px; color:white; background:orange;  "></p>
 
-<p style="margin-top:2ex;"><a href="@routes.Application.patients">Click to go back to 'all patients'.</a></p>
+<p style="margin-top:2ex;"><a href="@routes.Application.selectPatient(patient.person.id)">Click to go back to all patient details.</a></p>
 
 }

@@ -52,13 +52,12 @@ object Person {
     id
   }
 
-  // TODO: what happens if you select a non-existent ID?
-  def select(id: Long): Person = {
+  def select(id: Long): Option[Person] = {
     DB.withConnection { implicit c =>
       SQL("select * from person where id = {id}").on(
         'id -> id
       ).as(person *)
-    }.head
+    }.headOption
   }
 
   def selectByEmail(email: String): Option[Person] = {

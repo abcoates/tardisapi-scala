@@ -142,7 +142,7 @@ object Application extends SessionController {
             if (isJSON) {
               Ok(toJson(Map(
                 "status" -> toJson(RESULT_OK),
-                "personid" -> toJson(person.get.id),
+                "userid" -> toJson(person.get.id),
                 "isPatient" -> toJson(Patient.select(person.get.id).isDefined),
                 "isDoctor" -> toJson(Doctor.select(person.get.id).isDefined),
                 "isAdmin" -> toJson(Administrator.select(person.get.id).isDefined)
@@ -195,7 +195,7 @@ object Application extends SessionController {
     if (request.headers.get("accept").getOrElse("").equals(JsonMimeType)) {
       val personDetails = Person.all().map {
         person => Map(
-          "id" -> toJson(person.id),
+          "userid" -> toJson(person.id),
           "username" -> toJson(person.name),
           "email" -> toJson(person.email)
         )
@@ -221,7 +221,7 @@ object Application extends SessionController {
     val person = Person.select(id).get // TODO: add code to deal with non-existent person ID
     if (request.headers.get("accept").getOrElse("").equals(JsonMimeType)) {
       val personDetails = Map(
-        "id" -> toJson(person.id),
+        "userid" -> toJson(person.id),
         "username" -> toJson(person.name),
         "email" -> toJson(person.email)
       )
@@ -243,7 +243,7 @@ object Application extends SessionController {
     if (request.headers.get("accept").getOrElse("").equals(JsonMimeType)) {
       val patientDetails = Patient.all().map {
         patient => Map(
-          "id" -> toJson(patient.person.id),
+          "userid" -> toJson(patient.person.id),
           "username" -> toJson(patient.person.name),
           "email" -> toJson(patient.person.email),
           "password" -> toJson(patient.person.password),
@@ -272,9 +272,8 @@ object Application extends SessionController {
     val patient = Patient.select(id).get
     if (request.headers.get("accept").getOrElse("").equals(JsonMimeType)) {
       val patientDetails = Map(
-        "id" -> toJson(patient.person.id),
+        "userid" -> toJson(patient.person.id),
         "username" -> toJson(patient.person.name),
-        "password" -> toJson(patient.person.password),
         "email" -> toJson(patient.person.email),
         "symptoms" -> toJson(Symptom.all(patient.id).map{symptom => symptom.id}),
         "events" -> toJson(Event.all(patient.id).map{event => event.id})
@@ -291,15 +290,62 @@ object Application extends SessionController {
   })
 
   def newSymptom(personid: Long) = checkLoggedIn(Action { implicit request =>
+    val isJSON = request.headers.get("accept").getOrElse("").equals(JsonMimeType)
     val patient = Patient.select(personid).get
     symptomForm.bindFromRequest.fold(
-      errors => BadRequest(views.html.patient(patient, Symptom.all(patient.id), Event.all(patient.id), errors, eventForm)),
+      errors =>
+        if (isJSON) {
+          BadRequest(toJson(Map(
+            "status" -> RESULT_FAIL,
+            "errorCode" -> "newSymptom:fold:fail",
+            "errorDetails" -> "There was a problem at the server in interpreting the new symptom details."
+          )))
+        } else {
+          BadRequest(views.html.symptoms(patient, Symptom.all(patient.id), errors, "Unable to process the symptom details, please try again."))
+        },
       _ => {
         val (whichsymptom, whensymptom) = symptomForm.bindFromRequest.get
-        Symptom.create(patient.id, whichsymptom, whensymptom)
-        Redirect(routes.Application.selectPatient(personid))
+        val symptomId = Symptom.create(patient.id, whichsymptom, whensymptom)
+        if (symptomId isDefined) {
+          if (isJSON) {
+            Ok(toJson(Map(
+              "status" -> toJson(RESULT_OK),
+              "userid" -> toJson(personid),
+              "isPatient" -> toJson(Patient.select(personid).isDefined),
+              "newSymptomId" -> toJson(symptomId.get)
+            )))
+          } else {
+            Redirect(routes.Application.symptoms(personid))
+          }
+        } else {
+          if (isJSON) {
+            BadRequest(toJson(Map(
+              "status" -> toJson(RESULT_FAIL),
+              "userid" -> toJson(personid),
+              "errorCode" -> toJson("newSymptom:create:failure"),
+              "errorDetails" -> toJson("The server was unable to add the new symptom.")
+            )))
+          } else {
+            BadRequest(views.html.symptoms(patient, Symptom.all(patient.id), symptomForm.bindFromRequest, "Unable to add the new symptom, please try again."))
+          }
+        }
       }
     )
+  })
+
+  def symptoms(personid: Long) = checkLoggedIn(Action { request =>
+    val patient = Patient.select(personid).get
+    if (request.headers.get("accept").getOrElse("").equals(JsonMimeType)) {
+      val patientSymptomDetails = Map(
+        "userid" -> toJson(patient.person.id),
+        "username" -> toJson(patient.person.name),
+        "email" -> toJson(patient.person.email),
+        "symptoms" -> toJson(Symptom.all(patient.id).map{symptom => symptom.id})
+      )
+      Ok(toJson(patientSymptomDetails))
+    } else {
+      Ok(views.html.symptoms(patient, Symptom.all(patient.id), symptomForm, ""))
+    }
   })
 
   def selectSymptom(personid: Long, id: Long) = checkLoggedIn(Action { request =>
@@ -308,8 +354,8 @@ object Application extends SessionController {
     if (symptom.patient.id == patient.id) {
       if (request.headers.get("accept").getOrElse("").equals(JsonMimeType)) {
         val symptomDetails = Map(
-          "id" -> toJson(symptom.id),
-          "personid" -> toJson(symptom.patient.person.id),
+          "symptomid" -> toJson(symptom.id),
+          "userid" -> toJson(symptom.patient.person.id),
           "whichsymptom" -> toJson(symptom.whichsymptom),
           "whensymptom" -> toJson(symptom.whensymptom.toString)
         )
@@ -336,15 +382,62 @@ object Application extends SessionController {
   })
 
   def newEvent(personid: Long) = checkLoggedIn(Action { implicit request =>
+    val isJSON = request.headers.get("accept").getOrElse("").equals(JsonMimeType)
     val patient = Patient.select(personid).get
     eventForm.bindFromRequest.fold(
-      errors => BadRequest(views.html.patient(patient, Symptom.all(patient.id), Event.all(patient.id), symptomForm, errors)),
+      errors =>
+        if (isJSON) {
+          BadRequest(toJson(Map(
+            "status" -> RESULT_FAIL,
+            "errorCode" -> "newEvent:fold:fail",
+            "errorDetails" -> "There was a problem at the server in interpreting the new event details."
+          )))
+        } else {
+          BadRequest(views.html.events(patient, Event.all(patient.id), errors, "Unable to process the event details, please try again."))
+        },
       _ => {
         val (eventname, eventtime) = eventForm.bindFromRequest.get
-        Event.create(patient.id, eventname, eventtime)
-        Redirect(routes.Application.selectPatient(personid))
+        val eventId = Event.create(patient.id, eventname, eventtime)
+        if (eventId isDefined) {
+          if (isJSON) {
+            Ok(toJson(Map(
+              "status" -> toJson(RESULT_OK),
+              "userid" -> toJson(personid),
+              "isPatient" -> toJson(Patient.select(personid).isDefined),
+              "newEventId" -> toJson(eventId.get)
+            )))
+          } else {
+            Redirect(routes.Application.events(personid))
+          }
+        } else {
+          if (isJSON) {
+            BadRequest(toJson(Map(
+              "status" -> toJson(RESULT_FAIL),
+              "userid" -> toJson(personid),
+              "errorCode" -> toJson("newEvent:create:failure"),
+              "errorDetails" -> toJson("The server was unable to add the new event.")
+            )))
+          } else {
+            BadRequest(views.html.events(patient, Event.all(patient.id), eventForm.bindFromRequest, "Unable to add the new event, please try again."))
+          }
+        }
       }
     )
+  })
+
+  def events(id: Long) = checkLoggedIn(Action { request =>
+    val patient = Patient.select(id).get
+    if (request.headers.get("accept").getOrElse("").equals(JsonMimeType)) {
+      val patientEventDetails = Map(
+        "userid" -> toJson(patient.person.id),
+        "username" -> toJson(patient.person.name),
+        "email" -> toJson(patient.person.email),
+        "events" -> toJson(Event.all(patient.id).map{event => event.id})
+      )
+      Ok(toJson(patientEventDetails))
+    } else {
+      Ok(views.html.events(patient, Event.all(patient.id), eventForm, ""))
+    }
   })
 
   def selectEvent(personid: Long, id: Long) = checkLoggedIn(Action { request =>
@@ -353,8 +446,8 @@ object Application extends SessionController {
     if (event.patient.id == patient.id) {
       if (request.headers.get("accept").getOrElse("").equals(JsonMimeType)) {
         val eventDetails = Map(
-          "id" -> toJson(event.id),
-          "personid" -> toJson(event.patient.person.id),
+          "eventid" -> toJson(event.id),
+          "userid" -> toJson(event.patient.person.id),
           "eventname" -> toJson(event.eventname),
           "eventtime" -> toJson(event.eventtime.toString)
         )

@@ -4,10 +4,10 @@ rem Usage: mobile-logout
 
 setlocal
 
-call configure-host.bat
+call configure.bat
 
 set HTTPHEADERS=-LH "Accept: application/json"
 
-curl %HTTPHEADERS% "%URLPREFIX%/mobile/v1/logout"
+curl %HTTPHEADERS% --cookie %COOKIE_FILE% "%URLPREFIX%/mobile/v1/logout"
 
 endlocal

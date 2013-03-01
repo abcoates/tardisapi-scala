@@ -27,10 +27,12 @@ GET     /patients/:id                           controllers.Application.selectPa
 POST    /patients                               controllers.Application.newPatient
 POST    /patients/:id/delete                    controllers.Application.deletePatient(id: Long)
 
+GET     /patients/:userid/symptoms              controllers.Application.symptoms(userid: Long)
 GET     /patients/:userid/symptoms/:id          controllers.Application.selectSymptom(userid: Long, id: Long)
 POST    /patients/:userid/symptoms              controllers.Application.newSymptom(userid: Long)
 POST    /patients/:userid/symptoms/:id/delete   controllers.Application.deleteSymptom(userid: Long, id: Long)
 
+GET     /patients/:userid/events                controllers.Application.events(userid: Long)
 GET     /patients/:userid/events/:id            controllers.Application.selectEvent(userid: Long, id: Long)
 POST    /patients/:userid/events                controllers.Application.newEvent(userid: Long)
 POST    /patients/:userid/events/:id/delete     controllers.Application.deleteEvent(userid: Long, id: Long)
@@ -38,8 +40,13 @@ POST    /patients/:userid/events/:id/delete     controllers.Application.deleteEv
 # Mobile API
 POST    /mobile/v1/login                        controllers.Application.checkLogin
 GET     /mobile/v1/logout                       controllers.Application.logout
-POST    /mobile/v1/users/:userid/symptoms       controllers.Application.newSymptom(userid: Long)
-POST    /mobile/v1/users/:userid/events         controllers.Application.newEvent(userid: Long)
+GET     /mobile/v1/patients/:userid             controllers.Application.selectPatient(userid: Long)
+GET     /mobile/v1/patients/:userid/symptoms    controllers.Application.symptoms(userid: Long)
+GET     /mobile/v1/patients/:userid/symptom/:id controllers.Application.selectSymptom(userid: Long, id: Long)
+GET     /mobile/v1/patients/:userid/events      controllers.Application.events(userid: Long)
+GET     /mobile/v1/patients/:userid/events/:id  controllers.Application.selectEvent(userid: Long, id: Long)
+POST    /mobile/v1/patients/:userid/symptoms    controllers.Application.newSymptom(userid: Long)
+POST    /mobile/v1/patients/:userid/events      controllers.Application.newEvent(userid: Long)
 
 # Default
 GET     /*unknown                               controllers.Application.default(unknown: String)

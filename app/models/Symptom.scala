@@ -31,14 +31,16 @@ object Symptom {
     allSymptoms.filter((s: Symptom) => s.patient.id.equals(patientid))
   }
 
-  def create(patientid: Long, whichsymptom: String, whensymptom: Date) {
+  def create(patientid: Long, whichsymptom: String, whensymptom: Date) = {
+    var id: Option[Long] = None
     DB.withConnection { implicit c =>
-      SQL("insert into symptom (patientid, whichsymptom, whensymptom) values ({patientid}, {whichsymptom}, {whensymptom})").on(
+      id = SQL("insert into symptom (patientid, whichsymptom, whensymptom) values ({patientid}, {whichsymptom}, {whensymptom})").on(
         'patientid -> patientid,
         'whichsymptom -> whichsymptom,
         'whensymptom -> whensymptom
       ).executeInsert()
     }
+    id
   }
 
   def select(id: Long): Symptom = {

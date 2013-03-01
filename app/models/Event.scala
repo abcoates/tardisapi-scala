@@ -31,14 +31,16 @@ object Event {
     allEvents.filter((e: Event) => e.patient.id.equals(patientid))
   }
 
-  def create(patientid: Long, eventname: String, eventtime: Date) {
+  def create(patientid: Long, eventname: String, eventtime: Date) = {
+    var id: Option[Long] = None
     DB.withConnection { implicit c =>
-      SQL("insert into event (patientid, eventname, eventtime) values ({patientid}, {eventname}, {eventtime})").on(
+      id = SQL("insert into event (patientid, eventname, eventtime) values ({patientid}, {eventname}, {eventtime})").on(
         'patientid -> patientid,
         'eventname -> eventname,
         'eventtime -> eventtime
       ).executeInsert()
     }
+    id
   }
 
   def select(id: Long): Event = {

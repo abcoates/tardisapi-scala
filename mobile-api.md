@@ -28,7 +28,7 @@ Logging In and Out
 </thead>
 <tbody>
 <tr><td><code>status</code></td><td>String = 'OK' or 'FAIL'</td><td>Whether the login request succeeded or failed.</td></tr>
-<tr><td><code>personid</code></td><td>Positive Integer</td><td>If 'status' is 'OK', the ID number of the person who logged in.</td></tr>
+<tr><td><code>userid</code></td><td>Positive Integer</td><td>If 'status' is 'OK', the ID number of the person who logged in.</td></tr>
 <tr><td><code>isPatient</code></td><td>Boolean</td><td>If 'status' is 'OK', whether the person who logged in is a patient.</td></tr>
 <tr><td><code>isDoctor</code></td><td>Boolean</td><td>If 'status' is 'OK', whether the person who logged in is a doctor.</td></tr>
 <tr><td><code>isAdmin</code></td><td>Boolean</td><td>If 'status' is 'OK', whether the person who logged in is an administrator.</td></tr>
