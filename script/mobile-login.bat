@@ -1,4 +1,4 @@
-@echo on
+@echo off
 
 rem Usage: mobile-login [email] [password]
 
@@ -11,12 +11,12 @@ call configure.bat
 
 set HTTPHEADERS=-LH "Accept: application/json"
 
-curl %HTTPHEADERS% --data "email=%EMAIL%&password=%PASSWORD%" --dump-header header.txt --cookie-jar %NEW_COOKIE_FILE% "%URLPREFIX%/mobile/v1/login"
+if exist %NEW_COOKIE_FILE% del %NEW_COOKIE_FILE%
 
-dir %NEW_COOKIE_FILE%
+curl %HTTPHEADERS% --data "email=%EMAIL%&password=%PASSWORD%" --cookie-jar %NEW_COOKIE_FILE% "%URLPREFIX%/mobile/v1/login"
 
-ren %NEW_COOKIE_FILE% %OLD_COOKIE_FILE%
+if not exist %NEW_COOKIE_FILE% echo !!!! missing cookie file
 
-dir %OLD_COOKIE_FILE%
+copy %NEW_COOKIE_FILE% %OLD_COOKIE_FILE%
 
 endlocal

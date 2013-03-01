@@ -130,9 +130,9 @@ object Application extends SessionController {
             "status" -> RESULT_FAIL,
             "errorCode" -> "checkLogin:fold:fail",
             "errorDetails" -> "There was a problem at the server in interpreting the login details."
-          )))
+          ))).withNewSession
         } else {
-          BadRequest(views.html.login(errors, ""))
+          BadRequest(views.html.login(errors, "")).withNewSession
         },
     _ => {
         val (email, password) = loginForm.bindFromRequest.get
@@ -146,7 +146,7 @@ object Application extends SessionController {
                 "isPatient" -> toJson(Patient.select(person.get.id).isDefined),
                 "isDoctor" -> toJson(Doctor.select(person.get.id).isDefined),
                 "isAdmin" -> toJson(Administrator.select(person.get.id).isDefined)
-              )))
+              ))).withSession("personid" -> person.get.id.toString)
             } else {
               Redirect(routes.Application.selectPerson(person.get.id)).withSession("personid" -> person.get.id.toString)
             }
@@ -158,9 +158,9 @@ object Application extends SessionController {
                 "errorDetails" -> "The login e-mail address and password did not match.",
                 "email" -> email,
                 "password" -> password
-              )))
+              ))).withNewSession
             } else {
-              BadRequest(views.html.login(loginForm.bindFromRequest, "Your e-mail and password did not match, please try again."))
+              BadRequest(views.html.login(loginForm.bindFromRequest, "Your e-mail and password did not match, please try again.")).withNewSession
             }
           }
         } else {
@@ -171,9 +171,9 @@ object Application extends SessionController {
               "errorDetails" -> "The login e-mail address does not match a registered user.",
               "email" -> email,
               "password" -> password
-            )))
+            ))).withNewSession
           } else {
-            BadRequest(views.html.login(loginForm, ""))
+            BadRequest(views.html.login(loginForm, "")).withNewSession
           }
         }
       }
@@ -185,7 +185,7 @@ object Application extends SessionController {
     if (isJSON) {
       Ok(toJson(Map(
         "status" -> RESULT_OK
-      )))
+      ))).withNewSession
     } else {
       Redirect(routes.Application.startHere).withNewSession
     }
