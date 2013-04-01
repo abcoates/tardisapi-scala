@@ -13,7 +13,7 @@ call mobile-login.bat %1 %2
 echo.
 
 rem !! Need to set up user ID manually.
-set USER_ID=4
+set USER_ID=1
 
 echo.
 echo Get patient details ...
@@ -26,12 +26,10 @@ call get-symptoms.bat %USER_ID%
 echo.
 
 rem !! Need to set up symptom IDs manually.
-set SYMPTOM_IDS=1
-
-for /f %%s in ( "%SYMPTOM_IDS%" ) do (
+for /l %%i in (1,1,2) do (
 echo.
-echo Get patient symptom #%%s ...
-call get-symptom.bat %USER_ID% %%s
+echo Get patient symptom #%%i ...
+call get-symptom.bat %USER_ID% %%i
 echo.
 )
 
@@ -41,12 +39,10 @@ call get-events.bat %USER_ID%
 echo.
 
 rem !! Need to set up event IDs manually.
-set EVENT_IDS=1
-
-for /f %%s in ( "%EVENT_IDS%" ) do (
+for /l %%i in (1,1,2) do (
 echo.
-echo Get patient event #%%s ...
-call get-event %USER_ID% %%s
+echo Get patient event #%%i ...
+call get-event %USER_ID% %%i
 echo.
 )
 
