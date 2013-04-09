@@ -350,13 +350,13 @@ Adding a new symptom
 <tr><th>Windows example</th><td><pre>set URLPREFIX=http://localhost:9000
 set USERID=1
 set SYMPTOMTEXT=some text
-set SYMPTOMDATE=2012-12-31 12:15:57
+set SYMPTOMDATE=2012-12-31 12:15:00
 set HTTPHEADERS=-LH "Accept: application/json"
 curl %HTTPHEADERS% --data "whichsymptom=%SYMPTOMTEXT%&whensymptom=%SYMPTOMDATE%" "%URLPREFIX%/mobile/v1/patients/%USERID%/symptoms"</pre></td></tr>
 <tr><th>Mac/Linux example (untested)</th><td><pre>URLPREFIX='http://localhost:9000'
 USERID=1
 SYMPTOMTEXT='some text'
-SYMPTOMDATE='2012-12-31 12:15:57'
+SYMPTOMDATE='2012-12-31 12:15:00'
 HTTPHEADERS=-LH "Accept: application/json"
 curl $HTTPHEADERS --data "whichsymptom=$SYMPTOMTEXT&whensymptom=$SYMPTOMDATE" "$URLPREFIX/mobile/v1/patients/$USERID/symptoms"</pre></td></tr>
 </tbody>

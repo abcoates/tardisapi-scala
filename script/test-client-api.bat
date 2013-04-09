@@ -48,7 +48,7 @@ echo.
 
 echo.
 echo Create patient symptom ...
-call create-symptom %USER_ID% "Symptom #4" "2013-04-04 23:11:00"
+call create-symptom %USER_ID% "Symptom #4" "2013-04-04 23:15:00"
 echo.
 
 echo.
