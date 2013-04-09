@@ -1,8 +1,8 @@
-@(patient: Patient, symptoms: List[Symptom], events: List[Event], symptomForm: Form[Tuple2[String, java.util.Date]], eventForm: Form[Tuple2[String, java.util.Date]])
+@(patient: Patient, symptoms: List[Symptom], events: List[Event], symptomForm: Form[Tuple2[String, org.joda.time.DateTime]], eventForm: Form[Tuple2[String, java.util.Date]])
 
 @import helper._
 @import java.util.Date
-@import java.text.SimpleDateFormat
+@import org.joda.time.DateTime
 
 @main("TARDIS >> Patient: " + patient.person.name) {
 

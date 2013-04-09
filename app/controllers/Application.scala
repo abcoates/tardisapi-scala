@@ -7,6 +7,8 @@ import play.api.data.Forms._
 import play.api.libs.json.Json._
 import play.api.libs.json.JsObject
 import models.{Person, Patient, Doctor, Administrator, Symptom, Event}
+import java.util.Date
+import org.joda.time._
 
 trait SessionController extends Controller {
 
@@ -57,7 +59,7 @@ object Application extends SessionController {
   val symptomForm = Form(
     tuple(
       "whichsymptom" -> nonEmptyText,
-      "whensymptom" -> date // TODO: make this a date/time somehow, to nearest quarter hour
+      "whensymptom" -> jodaDate("yyyy-MM-dd HH:mm:ss") // TODO: [done??] make this a date/time somehow, to nearest quarter hour
     )
   )
 
@@ -309,14 +311,13 @@ object Application extends SessionController {
         },
       _ => {
         val (whichsymptom, whensymptom) = symptomForm.bindFromRequest.get
-        val symptomId = Symptom.create(patient.id, whichsymptom, whensymptom)
+        val symptomId = Symptom.create(patient.id, whichsymptom, new Date(whensymptom getMillis))
         if (symptomId isDefined) {
           if (isJSON) {
             Ok(toJson(Map(
               "status" -> toJson(RESULT_OK),
               "userid" -> toJson(personid),
-              "isPatient" -> toJson(Patient.select(personid).isDefined),
-              "newSymptomId" -> toJson(symptomId.get)
+              "symptomid" -> toJson(symptomId.get)
             )))
           } else {
             Redirect(routes.Application.symptoms(personid))
@@ -363,7 +364,7 @@ object Application extends SessionController {
           "symptomid" -> toJson(symptom.id),
           "userid" -> toJson(symptom.patient.person.id),
           "whichsymptom" -> toJson(symptom.whichsymptom),
-          "whensymptom" -> toJson(symptom.whensymptom.toString)
+          "whensymptom" -> toJson(symptom.whensymptomAsString)
         )
         Ok(toJson(symptomDetails))
       } else {
@@ -409,8 +410,7 @@ object Application extends SessionController {
             Ok(toJson(Map(
               "status" -> toJson(RESULT_OK),
               "userid" -> toJson(personid),
-              "isPatient" -> toJson(Patient.select(personid).isDefined),
-              "newEventId" -> toJson(eventId.get)
+              "eventid" -> toJson(eventId.get)
             )))
           } else {
             Redirect(routes.Application.events(personid))

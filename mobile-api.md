@@ -314,3 +314,103 @@ curl "$URLPREFIX/mobile/v1/patients/$USERID/events/EVENTID"</pre></td></tr>
 <br/>
 
 ----
+
+Adding a new symptom
+------------------
+    POST /mobile/v1/patients/:userid/symptoms
+* <code>:userid</code> is the user ID, as returned by the login, for the patient for whom the new symptom is being added.
+
+<table>
+<thead>
+<tr><th>Form Parameter</th><th>Type</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>whichsymptom</code></td><td>String</td><td>Text description of the symptom.</td></tr>
+<tr><td><code>whensymptom</code></td><td>Date/Time</td><td>Date/time at which the symptom occurred, to the nearest quarter hour.</td></tr>
+</tbody>
+</table>
+<br/>
+
+<table>
+<thead>
+<tr><th>JSON Result Field</th><th>Type</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>status</code></td><td>String = 'OK' or 'FAIL'</td><td>Whether the request to add a symptom succeeded or failed.</td></tr>
+<tr><td><code>userid</code></td><td>Positive Integer</td><td>If 'status' is 'OK', the user ID of the patient.</td></tr>
+<tr><td><code>symptomid</code></td><td>Positive Integer</td><td>If 'status' is 'OK', the ID of the added symptom.</td></tr>
+<tr><td><code>errorCode</code></td><td>String</td><td>If 'status' is 'FAIL', the error code.</td></tr>
+<tr><td><code>errorDetails</code></td><td>String</td><td>If 'status' is 'FAIL', a human readable description of the error.</td></tr>
+</tbody>
+</table>
+<br/>
+
+<table>
+<tbody>
+<tr><th>Windows example</th><td><pre>set URLPREFIX=http://localhost:9000
+set USERID=1
+set SYMPTOMTEXT=some text
+set SYMPTOMDATE=2012-12-31 12:15:57
+set HTTPHEADERS=-LH "Accept: application/json"
+curl %HTTPHEADERS% --data "whichsymptom=%SYMPTOMTEXT%&whensymptom=%SYMPTOMDATE%" "%URLPREFIX%/mobile/v1/patients/%USERID%/symptoms"</pre></td></tr>
+<tr><th>Mac/Linux example (untested)</th><td><pre>URLPREFIX='http://localhost:9000'
+USERID=1
+SYMPTOMTEXT='some text'
+SYMPTOMDATE='2012-12-31 12:15:57'
+HTTPHEADERS=-LH "Accept: application/json"
+curl $HTTPHEADERS --data "whichsymptom=$SYMPTOMTEXT&whensymptom=$SYMPTOMDATE" "$URLPREFIX/mobile/v1/patients/$USERID/symptoms"</pre></td></tr>
+</tbody>
+</table>
+<br/>
+
+----
+
+Adding a new event
+------------------
+    POST /mobile/v1/patients/:userid/events
+* <code>:userid</code> is the user ID, as returned by the login, for the patient for whom the new event is being added.
+
+<table>
+<thead>
+<tr><th>Form Parameter</th><th>Type</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>eventname</code></td><td>String</td><td>Text description of the event.</td></tr>
+<tr><td><code>eventtime</code></td><td>Date</td><td>Date on which the event occurred.</td></tr>
+</tbody>
+</table>
+<br/>
+
+<table>
+<thead>
+<tr><th>JSON Result Field</th><th>Type</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>status</code></td><td>String = 'OK' or 'FAIL'</td><td>Whether the request to add a symptom succeeded or failed.</td></tr>
+<tr><td><code>userid</code></td><td>Positive Integer</td><td>If 'status' is 'OK', the user ID of the patient.</td></tr>
+<tr><td><code>eventid</code></td><td>Positive Integer</td><td>If 'status' is 'OK', the ID of the added event.</td></tr>
+<tr><td><code>errorCode</code></td><td>String</td><td>If 'status' is 'FAIL', the error code.</td></tr>
+<tr><td><code>errorDetails</code></td><td>String</td><td>If 'status' is 'FAIL', a human readable description of the error.</td></tr>
+</tbody>
+</table>
+<br/>
+
+<table>
+<tbody>
+<tr><th>Windows example</th><td><pre>set URLPREFIX=http://localhost:9000
+set USERID=1
+set EVENTNAME=some text
+set EVENTTIME=2012-12-31
+set HTTPHEADERS=-LH "Accept: application/json"
+curl %HTTPHEADERS% --data "eventname=%EVENTNAME%&eventtime=%EVENTTIME%" "%URLPREFIX%/mobile/v1/patients/%USERID%/events"</pre></td></tr>
+<tr><th>Mac/Linux example (untested)</th><td><pre>URLPREFIX='http://localhost:9000'
+USERID=1
+EVENTNAME='some text'
+EVENTTIME='2012-12-31'
+HTTPHEADERS=-LH "Accept: application/json"
+curl $HTTPHEADERS --data "eventname=$EVENTNAME&eventtime=$EVENTTIME" "$URLPREFIX/mobile/v1/patients/$USERID/events"</pre></td></tr>
+</tbody>
+</table>
+<br/>
+
+----

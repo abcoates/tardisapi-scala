@@ -47,6 +47,16 @@ echo.
 )
 
 echo.
+echo Create patient symptom ...
+call create-symptom %USER_ID% "Symptom #4" "2013-04-04 23:11:00"
+echo.
+
+echo.
+echo Create patient event ...
+call create-event %USER_ID% "Event #4" 2013-02-28
+echo.
+
+echo.
 echo Logging out ...
 call mobile-logout.bat
 echo.

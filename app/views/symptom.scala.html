@@ -1,8 +1,7 @@
 @(symptom: Symptom)
 
 @import helper._
-@import java.util.Date
-@import java.text.SimpleDateFormat
+@import org.joda.time.DateTime
 
 @main("TARDIS >> Patient: " + symptom.patient.person.name + " - Symptom: #" + symptom.id) {
 
