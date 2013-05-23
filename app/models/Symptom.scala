@@ -17,7 +17,7 @@ case class Symptom(id: Long, patient: Patient, whichsymptom: String, whensymptom
 
 object Symptom {
 
-  val dateFormatGeneration: DateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+  val dateFormatGeneration: DateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss Z"); // DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
 
   implicit def rowToDateTime: Column[DateTime] = Column.nonNull { (value, meta) =>
     val MetaDataItem(qualified, nullable, clazz) = meta

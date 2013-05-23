@@ -48,7 +48,14 @@ echo.
 
 echo.
 echo Create patient symptom ...
-call create-symptom %USER_ID% "Symptom #4" "2013-04-04 23:15:00"
+set PLUS=%%%%2B
+rem This was previously "Symptom #4" at "2013-04-04 23:15:00".
+rem call create-symptom %USER_ID% "Regurgitation" "2013-05-05 15:28:13 +0000"
+rem call create-symptom %USER_ID% "Regurgitation" "2013-04-04 23:15:00"
+rem call create-symptom %USER_ID% "Regurgitation" "2013-04-04 15:28:13"
+rem call create-symptom %USER_ID% "Regurgitation" "2013-05-05 15:28:13"
+rem call create-symptom %USER_ID% "Regurgitation" "2013-05-05 15:28:13 +0000"
+call create-symptom %USER_ID% "Regurgitation" "2013-05-05 15:28:13 %PLUS%0000"
 echo.
 
 echo.

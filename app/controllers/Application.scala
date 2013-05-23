@@ -59,7 +59,7 @@ object Application extends SessionController {
   val symptomForm = Form(
     tuple(
       "whichsymptom" -> nonEmptyText,
-      "whensymptom" -> jodaDate("yyyy-MM-dd HH:mm:ss") // TODO: [done??] make this a date/time somehow, to nearest quarter hour
+      "whensymptom" -> jodaDate("yyyy-MM-dd HH:mm:ss Z") // "whensymptom" -> jodaDate("yyyy-MM-dd HH:mm:ss")
     )
   )
 
@@ -296,6 +296,20 @@ object Application extends SessionController {
   })
 
   def newSymptom(personid: Long) = checkLoggedIn(Action { implicit request =>
+    println("DBG: Application.newSystem: request = " + request + " ; " + request.body)
+    val requestBody = request.body.asInstanceOf[AnyContentAsFormUrlEncoded]
+    val requestData: Map[String, Seq[String]] = requestBody.data
+    for (key <- requestData.keys) {
+      val dataSeq: Seq[String] = requestData(key)
+      for (datum <- dataSeq) {
+        println("DBG: Application.newSystem: request[" + key + "] = " + datum + " : " + datum.getClass)
+      }
+    }
+    val symptomData: Map[String, String] = symptomForm.data
+    println("DBG: Application.newSystem: symptomForm size = " + symptomData.size)
+    for (key <- symptomData.keys) {
+      println("DBG: Application.newSystem: symptomForm[" + key + "] = " + symptomData(key))
+    }
     val isJSON = request.headers.get("accept").getOrElse("").equals(JsonMimeType)
     val patient = Patient.select(personid).get
     symptomForm.bindFromRequest.fold(
