@@ -7,7 +7,7 @@ import play.api.db._
 import play.api.Play.current
 import com.roundeights.hasher.Implicits._
 
-case class Person(id: Long, name: String, email: String, password: String, salt: String) {
+case class Person(id: Long, name: Option[String], email: String, password: String, salt: String) {
   def checkPassword(aPassword: String): Boolean = aPassword.trim.salt(salt).sha512.toString == password
 }
 
@@ -15,7 +15,7 @@ object Person {
 
   val person = {
     get[Long]("id") ~
-      get[String]("name") ~
+      get[Option[String]]("name") ~
         get[String]("email") ~
           get[String]("password") ~
             get[String]("salt") map {
@@ -43,7 +43,7 @@ object Person {
     var id: Option[Long] = None
     DB.withConnection { implicit c =>
       id = SQL("insert into person (name, email, password, salt) values ({name}, {email}, {password}, {salt})").on(
-        'name -> name.trim,
+        'name -> (if ((name == null) || (name.trim.length < 1)) None else Some(name.trim)),
         'email -> email.trim,
         'password -> password.trim.salt(salt).sha512.toString,
         'salt -> salt

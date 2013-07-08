@@ -2,9 +2,9 @@
 
 @import helper._
 
-@main("TARDIS >> User: " + person.name) {
+@main("TARDIS >> User: " + person.name.getOrElse("anonymous")) {
 
-<h1>User: @person.name</h1>
+<h1>User: @person.name.getOrElse("anonymous")</h1>
 
 <table>
     <tr style="border: black solid 1px;">
@@ -15,7 +15,7 @@
         <th style="border: black solid 1px;">Admin?</th>
     </tr>
     <tr style="border: black solid 1px;">
-        <td style="border: black solid 1px;">@person.name</td>
+        <td style="border: black solid 1px;">@person.name.getOrElse("anonymous")</td>
         <td style="border: black solid 1px;">@person.email</td>
         @if(Patient.select(person.id).isDefined) {
         <td style="border: black solid 1px; text-align:right;"><a href="@routes.Application.selectPatient(person.id)">true</a></td>

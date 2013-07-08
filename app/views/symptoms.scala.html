@@ -3,13 +3,13 @@
 @import helper._
 @import org.joda.time.DateTime
 
-@main("TARDIS >> Patient: " + patient.person.name + " - Symptoms") {
+@main("TARDIS >> Patient: " + patient.person.name.getOrElse("anonymous") + " - Symptoms") {
 
 @if((message != null) && (message.length >= 1)) {
 <h4 style="color:red; border: solid 1px red; margin-bottom: 2ex;">@message</h4>
 }
 
-<h1>Patient: @patient.person.name - Symptoms</h1>
+<h1>Patient: @patient.person.name.getOrElse("anonymous") - Symptoms</h1>
 
 <table>
     <tr style="border: black solid 1px;">
@@ -17,7 +17,7 @@
         <th style="border: black solid 1px;">Email</th>
     </tr>
     <tr style="border: black solid 1px;">
-        <td style="border: black solid 1px;">@patient.person.name</td>
+        <td style="border: black solid 1px;">@patient.person.name.getOrElse("anonymous")</td>
         <td style="border: black solid 1px;">@patient.person.email</td>
     </tr>
 </table>
