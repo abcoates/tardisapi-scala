@@ -4,9 +4,9 @@
 @import java.util.Date
 @import java.text.SimpleDateFormat
 
-@main("TARDIS >> Patient: " + event.patient.person.name + " - Event: #" + event.id) {
+@main("TARDIS >> Patient: " + event.patient.person.name.getOrElse("anonymous") + " - Event: #" + event.id) {
 
-<h1>Patient: @event.patient.person.name - Event #@event.id</h1>
+<h1>Patient: @event.patient.person.name.getOrElse("anonymous") - Event #@event.id</h1>
 
 <table>
     <tr style="border: black solid 1px;">

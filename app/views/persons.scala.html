@@ -18,7 +18,7 @@
     </tr>
     @persons.map { person =>
     <tr style="border: black solid 1px;">
-        <td style="border: black solid 1px;">@person.name</td>
+        <td style="border: black solid 1px;">@person.name.getOrElse("anonymous")</td>
         <td style="border: black solid 1px;">@person.email</td>
         @if(Patient.select(person.id).isDefined) {
             <td style="border: black solid 1px; text-align:right;"><a href="@routes.Application.selectPatient(person.id)">true</a></td>

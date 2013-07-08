@@ -3,9 +3,9 @@
 @import helper._
 @import org.joda.time.DateTime
 
-@main("TARDIS >> Patient: " + symptom.patient.person.name + " - Symptom: #" + symptom.id) {
+@main("TARDIS >> Patient: " + symptom.patient.person.name.getOrElse("anonymous") + " - Symptom: #" + symptom.id) {
 
-<h3>Patient: @symptom.patient.person.name - Symptom #@symptom.id</h3>
+<h3>Patient: @symptom.patient.person.name.getOrElse("anonymous") - Symptom #@symptom.id</h3>
 
 <table>
     <tr style="border: black solid 1px;">

@@ -167,6 +167,28 @@ object Application extends SessionController {
           }
         } else {
           if (isJSON) {
+            if ((email == null) || (email.trim.length < 1)) {
+              BadRequest(toJson(Map(
+                "status" -> RESULT_FAIL,
+                "errorCode" -> "checkLogin:email:nullorempty",
+                "errorDetails" -> "The login e-mail address cannot be blank.",
+                "email" -> email,
+                "password" -> password
+              ))).withNewSession
+            } else if ((password == null) || (password.trim.length < 1)) {
+              BadRequest(toJson(Map(
+                "status" -> RESULT_FAIL,
+                "errorCode" -> "checkLogin:password:nullorempty",
+                "errorDetails" -> "The login password cannot be blank.",
+                "email" -> email,
+                "password" -> password
+              ))).withNewSession
+            } else {
+              val patientId = Patient.create(name="", email, password, List[Boolean]()) // Note: no consents via this mechanism, and no name.
+              val patient = Patient.selectByPatientId(patientId.get)
+              Redirect(routes.Application.selectPerson(patient.get.person.id)).withSession("personid" -> patient.get.person.id.toString)
+            }
+/*
             BadRequest(toJson(Map(
               "status" -> RESULT_FAIL,
               "errorCode" -> "checkLogin:email:nosuchuser",
@@ -174,6 +196,7 @@ object Application extends SessionController {
               "email" -> email,
               "password" -> password
             ))).withNewSession
+*/
           } else {
             BadRequest(views.html.login(loginForm, "")).withNewSession
           }
@@ -199,7 +222,7 @@ object Application extends SessionController {
         person => Map(
           "status" -> toJson(RESULT_OK),
           "userid" -> toJson(person.id),
-          "username" -> toJson(person.name),
+          "username" -> toJson(person.name.getOrElse("anonymous")),
           "email" -> toJson(person.email)
         )
       }
@@ -226,7 +249,7 @@ object Application extends SessionController {
       val personDetails = Map(
         "status" -> toJson(RESULT_OK),
         "userid" -> toJson(person.id),
-        "username" -> toJson(person.name),
+        "username" -> toJson(person.name.getOrElse("anonymous")),
         "email" -> toJson(person.email)
       )
       Ok(toJson(personDetails))
@@ -249,7 +272,7 @@ object Application extends SessionController {
         patient => Map(
           "status" -> toJson(RESULT_OK),
           "userid" -> toJson(patient.person.id),
-          "username" -> toJson(patient.person.name),
+          "username" -> toJson(patient.person.name.getOrElse("anonymous")),
           "email" -> toJson(patient.person.email),
           "password" -> toJson(patient.person.password),
           "symptoms" -> toJson(Symptom.all(patient.id).map{symptom => symptom.id}),
@@ -279,7 +302,7 @@ object Application extends SessionController {
       val patientDetails = Map(
         "status" -> toJson(RESULT_OK),
         "userid" -> toJson(patient.person.id),
-        "username" -> toJson(patient.person.name),
+        "username" -> toJson(patient.person.name.getOrElse("anonymous")),
         "email" -> toJson(patient.person.email),
         "symptoms" -> toJson(Symptom.all(patient.id).map{symptom => symptom.id}),
         "events" -> toJson(Event.all(patient.id).map{event => event.id})
@@ -358,7 +381,7 @@ object Application extends SessionController {
       val patientSymptomDetails = Map(
         "status" -> toJson(RESULT_OK),
         "userid" -> toJson(patient.person.id),
-        "username" -> toJson(patient.person.name),
+        "username" -> toJson(patient.person.name.getOrElse("anonymous")),
         "email" -> toJson(patient.person.email),
         "symptoms" -> toJson(Symptom.all(patient.id).map{symptom => symptom.id})
       )
@@ -451,7 +474,7 @@ object Application extends SessionController {
       val patientEventDetails = Map(
         "status" -> toJson(RESULT_OK),
         "userid" -> toJson(patient.person.id),
-        "username" -> toJson(patient.person.name),
+        "username" -> toJson(patient.person.name.getOrElse("anonymous")),
         "email" -> toJson(patient.person.email),
         "events" -> toJson(Event.all(patient.id).map{event => event.id})
       )
