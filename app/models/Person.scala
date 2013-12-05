@@ -12,6 +12,7 @@ import java.text.SimpleDateFormat
 case class Person(id: Long, name: Option[String], email: String, password: String, salt: String, dateofregistration: Option[Date]) {
   def checkPassword(aPassword: String): Boolean = aPassword.trim.salt(salt).sha512.toString == password
   def dateofregistrationAsString = if (dateofregistration.isDefined) Person.dateFormatter.format(dateofregistration.get) else "unknown"
+  def dateofregistrationAsISOString = if (dateofregistration.isDefined) Person.isoDateFormatter.format(dateofregistration.get) else null
 }
 
 object Person {
@@ -28,6 +29,7 @@ object Person {
   }
 
   val dateFormatter = new SimpleDateFormat("dd MMM yyyy")
+  val isoDateFormatter = new SimpleDateFormat("yyyy-MM-dd")
 
   def all(): List[Person] = DB.withConnection { implicit c =>
     SQL("select * from person").as(person *)

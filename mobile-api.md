@@ -19,6 +19,7 @@ Logging In and Out
 <tbody>
 <tr><td><code>email</code></td><td>E-mail address provided by the user when registering.</td></tr>
 <tr><td><code>password</code></td><td>Password provided by the user when registering.</td></tr>
+<tr><td><strong>[NEW]</strong> <code>age</code></td><td>(Optional) Patient age as a floating point number of years.  Only used when creating a new patient via the initial login.</td></tr>
 </tbody>
 </table>
 <br/>
@@ -30,6 +31,7 @@ Logging In and Out
 <tbody>
 <tr><td><code>status</code></td><td>String = 'OK' or 'FAIL'</td><td>Whether the login request succeeded or failed.</td></tr>
 <tr><td><code>userid</code></td><td>Positive Integer</td><td>If 'status' is 'OK', the ID number of the person who logged in.</td></tr>
+<tr><td><strong>[NEW]</strong> <code>dateofregistration</code></td><td>Date string</td><td>If 'status' is 'OK', date of registration of the patient, in 'yyyy-MM-dd' format, or 'null'.</td></tr>
 <tr><td><code>isPatient</code></td><td>Boolean</td><td>If 'status' is 'OK', whether the person who logged in is a patient.</td></tr>
 <tr><td><code>isDoctor</code></td><td>Boolean</td><td>If 'status' is 'OK', whether the person who logged in is a doctor.</td></tr>
 <tr><td><code>isAdmin</code></td><td>Boolean</td><td>If 'status' is 'OK', whether the person who logged in is an administrator.</td></tr>
@@ -45,10 +47,10 @@ Logging In and Out
 <tbody>
 <tr><th>Windows example</th><td><pre>set URLPREFIX=http://localhost:9000
 set HTTPHEADERS=-LH "Accept: application/json"
-curl %HTTPHEADERS% --data "email=%EMAIL%&password=%PASSWORD%" "%URLPREFIX%/mobile/v1/login"</pre></td></tr>
+curl %HTTPHEADERS% --data "email=%EMAIL%&password=%PASSWORD%&age=%AGE%" "%URLPREFIX%/mobile/v1/login"</pre></td></tr>
 <tr><th>Mac/Linux example (untested)</th><td><pre>URLPREFIX='http://localhost:9000'
 HTTPHEADERS=-LH "Accept: application/json"
-curl $HTTPHEADERS --data "email=$EMAIL&password=$PASSWORD" "$URLPREFIX/mobile/v1/login"</pre></td></tr>
+curl $HTTPHEADERS --data "email=$EMAIL&password=$PASSWORD&age=$AGE" "$URLPREFIX/mobile/v1/login"</pre></td></tr>
 </tbody>
 </table>
 <br/>
@@ -115,6 +117,8 @@ Retrieving patient details
 <tr><td><code>userid</code></td><td>Positive Integer</td><td>If 'status' is 'OK', the ID number of the patient.</td></tr>
 <tr><td><code>username</code></td><td>String</td><td>If 'status' is 'OK', the name of the patient.</td></tr>
 <tr><td><code>email</code></td><td>String</td><td>If 'status' is 'OK', the e-mail address of the patient.</td></tr>
+<tr><td><strong>[NEW]</strong> <code>age</code></td><td>Double</td><td>If 'status' is 'OK', age of the patient, or 'null'.</td></tr>
+<tr><td><strong>[NEW]</strong> <code>dateofregistration</code></td><td>Date string</td><td>If 'status' is 'OK', date of registration of the patient, in 'yyyy-MM-dd' format, or 'null'.</td></tr>
 <tr><td><code>symptoms</code></td><td>Array of Positive Integer</td><td>If 'status' is 'OK', the ID numbers of the patient's symptoms.</td></tr>
 <tr><td><code>events</code></td><td>Array of Positive Integer</td><td>If 'status' is 'OK', the ID numbers of the patient's events.</td></tr>
 </tbody>

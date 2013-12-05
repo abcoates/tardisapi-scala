@@ -69,6 +69,24 @@ call mobile-logout.bat
 echo.
 
 echo.
+echo Creating new patient by logging in with age ...
+call mobile-login.bat mini@mouse minimouse 2.5
+echo.
+
+rem !! Need to set up new patient ID manually.
+set USER_ID=15
+
+echo.
+echo Get patient details ...
+call get-patient.bat %USER_ID%
+echo.
+
+echo.
+echo Logging out ...
+call mobile-logout.bat
+echo.
+
+echo.
 echo Done.
 echo.
 

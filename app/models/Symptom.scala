@@ -54,7 +54,6 @@ object Symptom {
   def create(patientid: Long, whichsymptom: String, whensymptom: Date) = {
     var id: Option[Long] = None
     DB.withConnection { implicit c =>
-      println("DBG: Symptom.create: whensymptom = " + whensymptom)
       id = SQL("insert into symptom (patientid, whichsymptom, whensymptom) values ({patientid}, {whichsymptom}, {whensymptom})").on(
         'patientid -> patientid,
         'whichsymptom -> whichsymptom,

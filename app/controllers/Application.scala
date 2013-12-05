@@ -157,6 +157,7 @@ object Application extends SessionController {
               Ok(toJson(Map(
                 "status" -> toJson(RESULT_OK),
                 "userid" -> toJson(person.get.id),
+                "dateofregistration" -> toJson(person.get.dateofregistrationAsISOString),
                 "isPatient" -> toJson(Patient.select(person.get.id).isDefined),
                 "isDoctor" -> toJson(Doctor.select(person.get.id).isDefined),
                 "isAdmin" -> toJson(Administrator.select(person.get.id).isDefined)
@@ -198,19 +199,25 @@ object Application extends SessionController {
             } else {
               val patientId = Patient.create(name="", email, password, List[Boolean](), age) // Note: no consents via this mechanism, and no name.
               val patient = Patient.selectByPatientId(patientId.get)
+              Ok(toJson(Map(
+                "status" -> toJson(RESULT_OK),
+                "userid" -> toJson(patient.get.person.id),
+                "dateofregistration" -> toJson(patient.get.person.dateofregistrationAsISOString),
+                "isPatient" -> toJson(Patient.select(patient.get.person.id).isDefined),
+                "isDoctor" -> toJson(Doctor.select(patient.get.person.id).isDefined),
+                "isAdmin" -> toJson(Administrator.select(patient.get.person.id).isDefined)
+              ))).withSession("personid" -> patient.get.person.id.toString)
+            }
+          } else {
+            if ((email == null) || (email.trim.length < 1)) {
+              BadRequest(views.html.login(loginForm.bindFromRequest, "The login e-mail address cannot be blank.")).withNewSession
+            } else if ((password == null) || (password.trim.length < 1)) {
+              BadRequest(views.html.login(loginForm.bindFromRequest, "The login password cannot be blank.")).withNewSession
+            } else {
+              val patientId = Patient.create(name="", email, password, List[Boolean](), age) // Note: no consents via this mechanism, and no name.
+              val patient = Patient.selectByPatientId(patientId.get)
               Redirect(routes.Application.selectPerson(patient.get.person.id)).withSession("personid" -> patient.get.person.id.toString)
             }
-/*
-            BadRequest(toJson(Map(
-              "status" -> RESULT_FAIL,
-              "errorCode" -> "checkLogin:email:nosuchuser",
-              "errorDetails" -> "The login e-mail address does not match a registered user.",
-              "email" -> email,
-              "password" -> password
-            ))).withNewSession
-*/
-          } else {
-            BadRequest(views.html.login(loginForm, "")).withNewSession
           }
         }
       }
@@ -288,7 +295,7 @@ object Application extends SessionController {
           "email" -> toJson(patient.person.email),
           "password" -> toJson(patient.person.password),
           "age" -> toJson(patient.age),
-          "dateofregistration" -> toJson(patient.person.dateofregistration),
+          "dateofregistration" -> toJson(patient.person.dateofregistrationAsISOString),
           "symptoms" -> toJson(Symptom.all(patient.id).map{symptom => symptom.id}),
           "events" -> toJson(Event.all(patient.id).map{event => event.id})
         )
@@ -318,6 +325,8 @@ object Application extends SessionController {
         "userid" -> toJson(patient.person.id),
         "username" -> toJson(patient.person.name.getOrElse("anonymous")),
         "email" -> toJson(patient.person.email),
+        "age" -> toJson(patient.age),
+        "dateofregistration" -> toJson(patient.person.dateofregistrationAsISOString),
         "symptoms" -> toJson(Symptom.all(patient.id).map{symptom => symptom.id}),
         "events" -> toJson(Event.all(patient.id).map{event => event.id})
       )
@@ -333,20 +342,6 @@ object Application extends SessionController {
   })
 
   def newSymptom(personid: Long) = checkLoggedIn(Action { implicit request =>
-    println("DBG: Application.newSystem: request = " + request + " ; " + request.body)
-    val requestBody = request.body.asInstanceOf[AnyContentAsFormUrlEncoded]
-    val requestData: Map[String, Seq[String]] = requestBody.data
-    for (key <- requestData.keys) {
-      val dataSeq: Seq[String] = requestData(key)
-      for (datum <- dataSeq) {
-        println("DBG: Application.newSystem: request[" + key + "] = " + datum + " : " + datum.getClass)
-      }
-    }
-    val symptomData: Map[String, String] = symptomForm.data
-    println("DBG: Application.newSystem: symptomForm size = " + symptomData.size)
-    for (key <- symptomData.keys) {
-      println("DBG: Application.newSystem: symptomForm[" + key + "] = " + symptomData(key))
-    }
     val isJSON = request.headers.get("accept").getOrElse("").equals(JsonMimeType)
     val patient = Patient.select(personid).get
     symptomForm.bindFromRequest.fold(
