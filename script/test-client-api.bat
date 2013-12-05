@@ -74,7 +74,7 @@ call mobile-login.bat mini@mouse minimouse 2.5
 echo.
 
 rem !! Need to set up new patient ID manually.
-set USER_ID=15
+set USER_ID=45
 
 echo.
 echo Get patient details ...
