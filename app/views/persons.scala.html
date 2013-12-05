@@ -37,18 +37,20 @@
     }
 </table>
 
+<!--
 <h2>Add a new user</h2>
 
-@form(routes.Application.newPerson) {
+(at)form(routes.Application.newPerson) {
 
-@inputText(personForm("username"))
-@inputText(personForm("email"))
-@inputText(personForm("password"))
+(at)inputText(personForm("username"))
+(at)inputText(personForm("email"))
+(at)inputText(personForm("password"))
 
 <input type="submit" value="Create">
 
 }
+-->
 
-<p style="margin-top:2ex;"><a href="@routes.Application.patients">Click to go to 'all patients'.</a></p>
+<p style="margin-top:2ex;"><a href="@routes.Application.persons">Click to go to 'all persons'.</a></p>
 
 }

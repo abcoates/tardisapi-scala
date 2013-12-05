@@ -7,8 +7,9 @@ import play.api.db._
 import play.api.Play.current
 import java.util.Date
 
-case class Patient(id: Long, person: Person, uniquestudyid: Long) {
+case class Patient(id: Long, person: Person, uniquestudyid: Long, age: Option[Double]) {
   def uniquestudyidAsString = "%12d".format(uniquestudyid)
+  def ageAsString: String = if (age.isDefined) age.get.toString else "unknown"
 }
 
 object Patient {
@@ -16,16 +17,17 @@ object Patient {
   val patient = {
     get[Long]("id") ~
       get[Long]("personid") ~
-        get[Long]("uniquestudyid") map {
-        case id~personid~uniquestudyid => Patient(id, Person.select(personid).get, uniquestudyid)
-      }
+        get[Long]("uniquestudyid") ~
+          get[Option[Double]]("age") map {
+            case id~personid~uniquestudyid~age => Patient(id, Person.select(personid).get, uniquestudyid, age)
+          }
   }
 
   def all(): List[Patient] = DB.withConnection { implicit c =>
     SQL("select * from patient").as(patient *)
   }
 
-  def create(name: String, email: String, password: String, consents: List[Boolean]): Option[Long] = {
+  def create(name: String, email: String, password: String, consents: List[Boolean], age: Option[Double]): Option[Long] = {
     val MaxUniqueStudyId = 1000000000000L
     val personid = Person.create(name, email, password)
     if (personid.isDefined) {
@@ -44,9 +46,10 @@ object Patient {
             notCheckedUnique = false
           }
         }
-        id = SQL("insert into patient (personid, uniquestudyid) values ({personid}, {uniquestudyid})").on(
+        id = SQL("insert into patient (personid, uniquestudyid, age) values ({personid}, {uniquestudyid}, {age})").on(
           'personid -> personid.get,
-          'uniquestudyid -> uniquestudyid
+          'uniquestudyid -> uniquestudyid,
+          'age -> age
         ).executeInsert()
       }
       val timestamp = new Date

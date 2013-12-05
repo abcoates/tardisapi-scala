@@ -1,4 +1,4 @@
-@(consentForm: Form[Tuple9[String, String, String, String, Boolean, Boolean, Boolean, Boolean, Boolean]], message: String)
+@(consentForm: Form[Tuple10[String, String, String, String, Boolean, Boolean, Boolean, Boolean, Boolean, Option[Double]]], message: String)
 
 @import helper._
 
@@ -82,6 +82,14 @@
 @inputText(consentForm("email"), '_help -> "This e-mail address will be used when logging in.")
 @inputPassword(consentForm("password"), '_help -> "Please type a password which also will be used when logging in.")
 @inputPassword(consentForm("password2"), '_help -> "Please type your password a second time.")
+<h5>Type the patient's age, e.g.:</h5>
+<ul>
+    <li><h5>'2'    for 2 years</h5></li>
+    <li><h5>'2.25' for 2 years 3 months</h5></li>
+    <li><h5>'2.5'  for 2 years 6 months</h5></li>
+    <li><h5>'2.75' for 2 years 9 months</h5></li>
+</ul>
+@inputText(consentForm("age"), args = 'size -> 32, 'placeholder -> "type the patient's age")
 <dl>
     <dt>
         <input type="submit" value="Agree and submit">

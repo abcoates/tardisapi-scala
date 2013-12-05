@@ -1,4 +1,4 @@
-@(loginForm: Form[Tuple2[String, String]], message: String)
+@(loginForm: Form[Tuple3[String, String, Option[Double]]], message: String)
 
 @import helper._
 
@@ -14,6 +14,15 @@
 
 @inputText(loginForm("email"), args = 'size -> 32, 'placeholder -> "type your email address")
 @inputPassword(loginForm("password"), args = 'size -> 32, 'placeholder -> "type your password")
+<h5>Type the patient's age for new registrations, e.g.:</h5>
+<ul>
+    <li><h5>'2'    for 2 years</h5></li>
+    <li><h5>'2.25' for 2 years 3 months</h5></li>
+    <li><h5>'2.5'  for 2 years 6 months</h5></li>
+    <li><h5>'2.75' for 2 years 9 months</h5></li>
+</ul>
+<h5>If not a new registration, leave the age blank.</h5>
+@inputText(loginForm("age"), args = 'size -> 32, 'placeholder -> "type the patient's age")
 <dl>
     <dt>
         <input type="submit" value="Login">

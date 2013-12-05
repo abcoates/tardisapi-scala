@@ -19,7 +19,7 @@ GET     /logout                                 controllers.Application.logout
 # 'User' in the API corresponds to 'Person' in the application/database.
 GET     /users                                  controllers.Application.persons
 GET     /users/:id                              controllers.Application.selectPerson(id: Long)
-POST    /users                                  controllers.Application.newPerson
+# POST    /users                                  controllers.Application.newPerson
 POST    /users/:id/delete                       controllers.Application.deletePerson(id: Long)
 
 GET     /patients                               controllers.Application.patients

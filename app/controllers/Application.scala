@@ -4,6 +4,7 @@ import play.api._
 import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
+import play.api.data.format.Formats._
 import play.api.libs.json.Json._
 import play.api.libs.json.JsObject
 import models.{Person, Patient, Doctor, Administrator, Symptom, Event}
@@ -30,7 +31,8 @@ object Application extends SessionController {
   val loginForm = Form(
     tuple(
       "email" -> text,
-      "password" -> text
+      "password" -> text,
+      "age" -> optional(of[Double])
     )
   )
 
@@ -39,6 +41,15 @@ object Application extends SessionController {
       "username" -> nonEmptyText,
       "email" -> nonEmptyText,
       "password" -> nonEmptyText
+    )
+  )
+
+  val patientForm = Form(
+    tuple(
+      "username" -> nonEmptyText,
+      "email" -> nonEmptyText,
+      "password" -> nonEmptyText,
+      "age" -> of[Double]
     )
   )
 
@@ -52,7 +63,8 @@ object Application extends SessionController {
       "consent2" -> boolean,
       "consent3" -> boolean,
       "consent4" -> boolean,
-      "consent5" -> boolean
+      "consent5" -> boolean,
+      "age" -> optional(of[Double])
     )
   )
 
@@ -96,7 +108,7 @@ object Application extends SessionController {
     consentForm.bindFromRequest.fold(
       errors => BadRequest(views.html.infosheet(errors, "")),
       _ => {
-        val (username, email, password, password2, consent1, consent2, consent3, consent4, consent5) = consentForm.bindFromRequest.get
+        val (username, email, password, password2, consent1, consent2, consent3, consent4, consent5, age) = consentForm.bindFromRequest.get
         if (!(consent1 && consent2 && consent3 && consent4 && consent5)) {
           BadRequest(views.html.infosheet(consentForm.bindFromRequest, "You must consent to all 5 conditions in order to register."))
         } else if (!(email.contains("@") && (email.trim.replaceAll("\\s+", "") == email.trim))) {
@@ -104,7 +116,7 @@ object Application extends SessionController {
         } else if (password != password2) {
           BadRequest(views.html.infosheet(consentForm.bindFromRequest, "Your 2 passwords did not match, please try again."))
         } else {
-          val patientid = Patient.create(username, email, password, List(consent1, consent2, consent3, consent4, consent5))
+          val patientid = Patient.create(username, email, password, List(consent1, consent2, consent3, consent4, consent5), age)
           if (patientid.isDefined) {
             Redirect(routes.Application.selectPatient(patientid.get)).withSession("personid" -> patientid.get.toString)
           } else {
@@ -137,7 +149,7 @@ object Application extends SessionController {
           BadRequest(views.html.login(errors, "")).withNewSession
         },
     _ => {
-        val (email, password) = loginForm.bindFromRequest.get
+        val (email, password, age) = loginForm.bindFromRequest.get
         val person = Person.selectByEmail(email)
         if (person isDefined) {
           if (person.get.checkPassword(password)) {
@@ -184,7 +196,7 @@ object Application extends SessionController {
                 "password" -> password
               ))).withNewSession
             } else {
-              val patientId = Patient.create(name="", email, password, List[Boolean]()) // Note: no consents via this mechanism, and no name.
+              val patientId = Patient.create(name="", email, password, List[Boolean](), age) // Note: no consents via this mechanism, and no name.
               val patient = Patient.selectByPatientId(patientId.get)
               Redirect(routes.Application.selectPerson(patient.get.person.id)).withSession("personid" -> patient.get.person.id.toString)
             }
@@ -232,16 +244,16 @@ object Application extends SessionController {
     }
   })
 
-  def newPerson = checkLoggedIn(Action { implicit request =>
-    personForm.bindFromRequest.fold(
-      errors => BadRequest(views.html.persons(Person.all(), errors)),
-      _ => {
-        val (username, email, password) = personForm.bindFromRequest.get
-        Person.create(username, email, password)
-        Redirect(routes.Application.persons)
-      }
-    )
-  })
+//  def newPerson = checkLoggedIn(Action { implicit request =>
+//    personForm.bindFromRequest.fold(
+//      errors => BadRequest(views.html.persons(Person.all(), errors)),
+//      _ => {
+//        val (username, email, password) = personForm.bindFromRequest.get
+//        Person.create(username, email, password)
+//        Redirect(routes.Application.persons)
+//      }
+//    )
+//  })
 
   def selectPerson(id: Long) = checkLoggedIn(Action { request =>
     val person = Person.select(id).get // TODO: add code to deal with non-existent person ID
@@ -275,22 +287,24 @@ object Application extends SessionController {
           "username" -> toJson(patient.person.name.getOrElse("anonymous")),
           "email" -> toJson(patient.person.email),
           "password" -> toJson(patient.person.password),
+          "age" -> toJson(patient.age),
+          "dateofregistration" -> toJson(patient.person.dateofregistration),
           "symptoms" -> toJson(Symptom.all(patient.id).map{symptom => symptom.id}),
           "events" -> toJson(Event.all(patient.id).map{event => event.id})
         )
       }
       Ok(toJson(patientDetails))
     } else {
-      Ok(views.html.patients(Patient.all(), personForm))
+      Ok(views.html.patients(Patient.all(), patientForm))
     }
   })
 
   def newPatient = checkLoggedIn(Action { implicit request =>
-    personForm.bindFromRequest.fold(
+    patientForm.bindFromRequest.fold(
       errors => BadRequest(views.html.patients(Patient.all(), errors)),
       _ => {
-        val (username, password, email) = personForm.bindFromRequest.get
-        Patient.create(username, email, password, List[Boolean]()) // TODO: should this be allowed, no consents?
+        val (username, email, password, age) = patientForm.bindFromRequest.get
+        Patient.create(username, email, password, List[Boolean](), Some(age)) // TODO: should this be allowed, no consents?
         Redirect(routes.Application.patients)
       }
     )
