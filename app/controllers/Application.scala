@@ -214,9 +214,7 @@ object Application extends SessionController {
             } else if ((password == null) || (password.trim.length < 1)) {
               BadRequest(views.html.login(loginForm.bindFromRequest, "The login password cannot be blank.")).withNewSession
             } else {
-              val patientId = Patient.create(name="", email, password, List[Boolean](), age) // Note: no consents via this mechanism, and no name.
-              val patient = Patient.selectByPatientId(patientId.get)
-              Redirect(routes.Application.selectPerson(patient.get.person.id)).withSession("personid" -> patient.get.person.id.toString)
+              BadRequest(views.html.login(loginForm.bindFromRequest, "That login e-mail address and password did not match, please try again.")).withNewSession
             }
           }
         }
