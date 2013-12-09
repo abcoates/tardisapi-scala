@@ -10,7 +10,7 @@
     <tr style="border: black solid 1px;">
         <th style="border: black solid 1px;">Name</th>
         <th style="border: black solid 1px;">Email</th>
-        <th style="border: black solid 1px;">Age</th>
+        <th style="border: black solid 1px;">Age at registration</th>
         <th style="border: black solid 1px;">Date of registration</th>
         <th style="border: black solid 1px;"># symptoms</th>
         <th style="border: black solid 1px;"># events</th>
@@ -21,7 +21,7 @@
     <tr style="border: black solid 1px;">
         <td style="border: black solid 1px;">@patient.person.name.getOrElse("anonymous")</td>
         <td style="border: black solid 1px;">@patient.person.email</td>
-        <td style="border: black solid 1px;">@patient.ageAsString</td>
+        <td style="border: black solid 1px;">@patient.ageatregistrationAsString</td>
         <td style="border: black solid 1px;">@patient.person.dateofregistrationAsString</td>
         <td style="border: black solid 1px; text-align:right;">@Symptom.all(patient.id).size</td>
         <td style="border: black solid 1px; text-align:right;">@Event.all(patient.id).size</td>
@@ -51,7 +51,7 @@
     <li><h5>'2.5'  for 2 years 6 months</h5></li>
     <li><h5>'2.75' for 2 years 9 months</h5></li>
 </ul>
-@inputText(patientForm("age"))
+@inputText(patientForm("ageatregistration"))
 
 <input type="submit" value="Create">
 

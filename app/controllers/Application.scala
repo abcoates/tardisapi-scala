@@ -32,7 +32,7 @@ object Application extends SessionController {
     tuple(
       "email" -> text,
       "password" -> text,
-      "age" -> optional(of[Double])
+      "ageatregistration" -> optional(of[Double])
     )
   )
 
@@ -49,7 +49,7 @@ object Application extends SessionController {
       "username" -> nonEmptyText,
       "email" -> nonEmptyText,
       "password" -> nonEmptyText,
-      "age" -> of[Double]
+      "ageatregistration" -> of[Double]
     )
   )
 
@@ -64,7 +64,7 @@ object Application extends SessionController {
       "consent3" -> boolean,
       "consent4" -> boolean,
       "consent5" -> boolean,
-      "age" -> optional(of[Double])
+      "ageatregistration" -> optional(of[Double])
     )
   )
 
@@ -108,7 +108,7 @@ object Application extends SessionController {
     consentForm.bindFromRequest.fold(
       errors => BadRequest(views.html.infosheet(errors, "")),
       _ => {
-        val (username, email, password, password2, consent1, consent2, consent3, consent4, consent5, age) = consentForm.bindFromRequest.get
+        val (username, email, password, password2, consent1, consent2, consent3, consent4, consent5, ageatregistration) = consentForm.bindFromRequest.get
         if (!(consent1 && consent2 && consent3 && consent4 && consent5)) {
           BadRequest(views.html.infosheet(consentForm.bindFromRequest, "You must consent to all 5 conditions in order to register."))
         } else if (!(email.contains("@") && (email.trim.replaceAll("\\s+", "") == email.trim))) {
@@ -116,7 +116,7 @@ object Application extends SessionController {
         } else if (password != password2) {
           BadRequest(views.html.infosheet(consentForm.bindFromRequest, "Your 2 passwords did not match, please try again."))
         } else {
-          val patientid = Patient.create(username, email, password, List(consent1, consent2, consent3, consent4, consent5), age)
+          val patientid = Patient.create(username, email, password, List(consent1, consent2, consent3, consent4, consent5), ageatregistration)
           if (patientid.isDefined) {
             Redirect(routes.Application.selectPatient(patientid.get)).withSession("personid" -> patientid.get.toString)
           } else {
@@ -149,7 +149,7 @@ object Application extends SessionController {
           BadRequest(views.html.login(errors, "")).withNewSession
         },
     _ => {
-        val (email, password, age) = loginForm.bindFromRequest.get
+        val (email, password, ageatregistration) = loginForm.bindFromRequest.get
         val person = Person.selectByEmail(email)
         if (person isDefined) {
           if (person.get.checkPassword(password)) {
@@ -197,7 +197,7 @@ object Application extends SessionController {
                 "password" -> password
               ))).withNewSession
             } else {
-              val patientId = Patient.create(name="", email, password, List[Boolean](), age) // Note: no consents via this mechanism, and no name.
+              val patientId = Patient.create(name="", email, password, List[Boolean](), ageatregistration) // Note: no consents via this mechanism, and no name.
               val patient = Patient.selectByPatientId(patientId.get)
               Ok(toJson(Map(
                 "status" -> toJson(RESULT_OK),
@@ -292,7 +292,7 @@ object Application extends SessionController {
           "username" -> toJson(patient.person.name.getOrElse("anonymous")),
           "email" -> toJson(patient.person.email),
           "password" -> toJson(patient.person.password),
-          "age" -> toJson(patient.age),
+          "ageatregistration" -> toJson(patient.ageatregistration),
           "dateofregistration" -> toJson(patient.person.dateofregistrationAsISOString),
           "symptoms" -> toJson(Symptom.all(patient.id).map{symptom => symptom.id}),
           "events" -> toJson(Event.all(patient.id).map{event => event.id})
@@ -308,8 +308,8 @@ object Application extends SessionController {
     patientForm.bindFromRequest.fold(
       errors => BadRequest(views.html.patients(Patient.all(), errors)),
       _ => {
-        val (username, email, password, age) = patientForm.bindFromRequest.get
-        Patient.create(username, email, password, List[Boolean](), Some(age)) // TODO: should this be allowed, no consents?
+        val (username, email, password, ageatregistration) = patientForm.bindFromRequest.get
+        Patient.create(username, email, password, List[Boolean](), Some(ageatregistration)) // TODO: should this be allowed, no consents?
         Redirect(routes.Application.patients)
       }
     )
@@ -323,7 +323,7 @@ object Application extends SessionController {
         "userid" -> toJson(patient.person.id),
         "username" -> toJson(patient.person.name.getOrElse("anonymous")),
         "email" -> toJson(patient.person.email),
-        "age" -> toJson(patient.age),
+        "ageatregistration" -> toJson(patient.ageatregistration),
         "dateofregistration" -> toJson(patient.person.dateofregistrationAsISOString),
         "symptoms" -> toJson(Symptom.all(patient.id).map{symptom => symptom.id}),
         "events" -> toJson(Event.all(patient.id).map{event => event.id})

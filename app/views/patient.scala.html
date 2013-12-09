@@ -12,13 +12,13 @@
     <tr style="border: black solid 1px;">
         <th style="border: black solid 1px;">Name</th>
         <th style="border: black solid 1px;">Email</th>
-        <th style="border: black solid 1px;">Age</th>
+        <th style="border: black solid 1px;">Age at registration</th>
         <th style="border: black solid 1px;">Date of registration</th>
     </tr>
     <tr style="border: black solid 1px;">
         <td style="border: black solid 1px;">@patient.person.name.getOrElse("anonymous")</td>
         <td style="border: black solid 1px;">@patient.person.email</td>
-        <td style="border: black solid 1px;">@patient.ageAsString</td>
+        <td style="border: black solid 1px;">@patient.ageatregistrationAsString</td>
         <td style="border: black solid 1px;">@patient.person.dateofregistrationAsString</td>
     </tr>
 </table>
